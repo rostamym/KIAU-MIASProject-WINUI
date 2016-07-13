@@ -7,15 +7,76 @@ using System.Threading.Tasks;
 
 namespace DicomImageViewer
 {
+
+    public class CommonUtils
+    {
+
+        public static double[,,] ApplyFilterFunction(double[,,] pixes, Func<double, double> func)
+        {
+            var maxRowlength = pixes.GetLength(0);
+            var maxColLength = pixes.GetLength(1);
+            var maxDepthLength = pixes.GetLength(3);
+            var result = new double[maxRowlength,maxColLength,maxDepthLength];
+            
+            for (int rowIndex = 0; rowIndex < maxRowlength; rowIndex++)
+                for (int colIndex = 0; colIndex < maxColLength; colIndex++)
+                    for (int DepthIndex = 0; DepthIndex < maxDepthLength; DepthIndex++)
+                        result[rowIndex, colIndex,maxDepthLength] = func(pixes[rowIndex, colIndex,DepthIndex]);
+
+            return result;
+        }
+
+        public static short[,] ApplyFilterFunction(short[,] pixes, Func<short, short> func)
+        {
+            var maxRowlength = pixes.GetLength(0);
+            var maxColLength = pixes.GetLength(1);
+            var result = new short[maxRowlength, maxColLength];
+
+            for (int rowIndex = 0; rowIndex < maxRowlength; rowIndex++)
+            {
+                for (int colIndex = 0; colIndex < maxColLength; colIndex++)
+                {
+                    result[rowIndex, colIndex] = func(pixes[rowIndex, colIndex]);
+
+                }
+            }
+
+            return result;
+        }
+
+
+
+        public static double ConvertToOneDimension(byte rate255)
+        {
+            if (rate255 > 255)
+                return 1;
+            if (rate255 < 0)
+                return 0;
+
+            return ((double)rate255 / (double)255);
+        }
+        public static byte ConvertTo255Dimension(double rateOne)
+        {
+            if (rateOne > 1)
+                return 255;
+            if (rateOne < 0)
+                return 0;
+
+            return (byte)Convert.ToInt32((rateOne * (double)255));
+        }
+
+       
+    }
+
     public class PulmonaryNodulesDetection
     {
-        public Boolean[][][] LocalIntenceMask { get; set; }
+        public Boolean[,,] LocalIntenceMask { get; set; }
 
-        public void FindInc(double[][][] imageBinery)
+        public void FindInc(double[,,] imageBinery)
         {
             //Simple thresholding
-//            var filtering = new Filtering();
-//            filtering.
+            double threshold=-500;
+            imageBinery = RemoveAirByThreshold(imageBinery, threshold);
 
             //High-Level VQ
             List<LocalIntenceVector> intenceVectores = MakeIntenceVectores(imageBinery);
@@ -34,9 +95,13 @@ namespace DicomImageViewer
             highLevelVqAlgoritm.DoAlgoritm();
         }
 
-        
+        private static double[,,] RemoveAirByThreshold(double[,,] imageBinery, double threshold)
+        {
+            return CommonUtils.ApplyFilterFunction(imageBinery, x=>(double)(x < threshold ? 1 : x));
+        }
 
-        private List<LocalIntenceVector> MakeIntenceVectores(double[][][] imageBinnery)
+
+        private List<LocalIntenceVector> MakeIntenceVectores(double[,,] imageBinnery)
         {
             var resualt = new List<LocalIntenceVector>();
 
@@ -58,7 +123,7 @@ namespace DicomImageViewer
         }
 
 
-        private LocalIntenceVector GetLocalIntenceVectorFromImageBinnery(double[][][] imageBinnery, structs.Point3D localPoint3D, bool[][][] localIntenceMask)
+        private LocalIntenceVector GetLocalIntenceVectorFromImageBinnery(double[,,] imageBinnery, structs.Point3D localPoint3D, bool[,,] localIntenceMask)
         {
             LocalIntenceVector localIntenceVector = null;
 
@@ -87,13 +152,13 @@ namespace DicomImageViewer
                     {
                         for (int z = 0; z < localIntenceMask.GetLength(0); z++)
                         {
-                            if (localIntenceMask[x][y][z])
+                            if (localIntenceMask[x,y,z])
                             {
                                 int indexX = localPoint3D.X - radialPoint.X + x;
                                 int indexY = localPoint3D.Y - radialPoint.Y + y;
                                 int indexZ = localPoint3D.Z - radialPoint.Z + z;
 
-                                double intence = imageBinnery[indexX][indexY][indexZ];
+                                double intence = imageBinnery[indexX,indexY,indexZ];
 
                                 localIntenceVector.LocalIntenceList.Add(intence);
                             }
@@ -106,7 +171,7 @@ namespace DicomImageViewer
             return localIntenceVector;
         }
 
-        private static bool CheckBoundry(double[][][] imageBinnery, structs.Point3D localPoint3D, bool[][][] localIntenceMask, structs.Point3D radialPoint)
+        private static bool CheckBoundry(double[,,] imageBinnery, structs.Point3D localPoint3D, bool[,,] localIntenceMask, structs.Point3D radialPoint)
         {
             return localPoint3D.X - radialPoint.X >= 0 &&
                    localPoint3D.Y - radialPoint.Y >= 0 &&
