@@ -24,8 +24,8 @@ namespace DicomImageViewer
             var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, localIntenceVectores);
             highLevelVqAlgoritm.DoAlgoritm();
 
-
             // Connect Component Analysis
+
 
             //Morphological Closing
 
@@ -33,6 +33,8 @@ namespace DicomImageViewer
             var lowLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 4, localIntenceVectores);
             highLevelVqAlgoritm.DoAlgoritm();
         }
+
+        
 
         private List<LocalIntenceVector> MakeIntenceVectores(double[][][] imageBinnery)
         {
