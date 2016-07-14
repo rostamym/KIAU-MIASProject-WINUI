@@ -11,6 +11,20 @@ namespace DicomImageViewer
     public class CommonUtils
     {
 
+        public static T[, ,] ApplyFilterFunction<T>(T[, ,] pixes, Func<T, T> func)
+        {
+            var maxRowlength = pixes.GetLength(0);
+            var maxColLength = pixes.GetLength(1);
+            var maxDepthLength = pixes.GetLength(3);
+            var result = new T[maxRowlength, maxColLength, maxDepthLength];
+
+            for (int rowIndex = 0; rowIndex < maxRowlength; rowIndex++)
+                for (int colIndex = 0; colIndex < maxColLength; colIndex++)
+                    for (int DepthIndex = 0; DepthIndex < maxDepthLength; DepthIndex++)
+                        result[rowIndex, colIndex, maxDepthLength] = func(pixes[rowIndex, colIndex, DepthIndex]);
+
+            return result;
+        }
         public static double[,,] ApplyFilterFunction(double[,,] pixes, Func<double, double> func)
         {
             var maxRowlength = pixes.GetLength(0);
@@ -86,13 +100,48 @@ namespace DicomImageViewer
             highLevelVqAlgoritm.DoAlgoritm();
 
             // Connect Component Analysis
-
-
+            var maskSize = new structs.Point3D()
+            {
+                X=imageBinery.GetLength(0),
+                Y = imageBinery.GetLength(1),
+                Z = imageBinery.GetLength(2)
+            };
+            var lungMask = MakMaskFromLocalIntenceVectore(highLevelVqAlgoritm.VectorLabeleDictionary[1], maskSize);
             //Morphological Closing
+
+            var structElement3D = MakeClosingMask();
+            new Morphology().closing3D(lungMask, structElement3D);
 
             // low level VQ
             var lowLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 4, localIntenceVectores);
-            highLevelVqAlgoritm.DoAlgoritm();
+            lowLevelVqAlgoritm.DoAlgoritm();
+
+            var incVector = lowLevelVqAlgoritm.VectorLabeleDictionary[3];
+        }
+
+        private short[,,] MakeClosingMask()
+        {
+            var result=new short[3,3,3];
+            CommonUtils.ApplyFilterFunction(result, x => 0);
+
+            result[1, 1, 0] = 1;
+            result[1, 1, 1] = 1;
+            result[1, 1, 2] = 1;
+            result[1, 0, 1] = 1;
+            result[1, 2, 1] = 1;
+            result[0, 1, 1] = 1;
+            result[2, 1, 1] = 1;
+            
+            return result;
+        }
+
+        private short[,,] MakMaskFromLocalIntenceVectore(List<LocalIntenceVector> localIntenceVectors, structs.Point3D maskSize)
+        {
+            var result = new short[maskSize.X, maskSize.Y, maskSize.Z];
+            CommonUtils.ApplyFilterFunction(result, x => 0);
+            localIntenceVectors.ForEach(x => result[x.mainPoint.X, x.mainPoint.Y, x.mainPoint.Z]=1);
+
+            return result;
         }
 
         private static double[,,] RemoveAirByThreshold(double[,,] imageBinery, double threshold)
@@ -192,7 +241,7 @@ namespace DicomImageViewer
 
         public List<RepresentativeVector> C { get;private set; }
 
-        public Dictionary<int,IList<LocalIntenceVector>> VectorLabeleDictionary { get; private set; }
+        public Dictionary<int,List<LocalIntenceVector>> VectorLabeleDictionary { get; private set; }
 
         public List<LocalIntenceVector> LocalIntenceVectors { get; private set; }
 
