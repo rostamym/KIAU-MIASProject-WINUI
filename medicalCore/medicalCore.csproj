@@ -46,6 +46,7 @@
     <Compile Include="BitmapOperations.cs" />
     <Compile Include="Dialog.cs" />
     <Compile Include="Filtering.cs" />
+    <Compile Include="Morphology.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="structs.cs" />
     <Compile Include="Thresholding.cs" />

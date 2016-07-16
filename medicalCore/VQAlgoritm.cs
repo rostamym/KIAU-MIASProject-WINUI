@@ -86,10 +86,10 @@ namespace DicomImageViewer
     {
         public Boolean[,,] LocalIntenceMask { get; set; }
 
-        public void FindInc(double[,,] imageBinery)
+        public void FindInc(short[,,] imageBinery)
         {
             //Simple thresholding
-            double threshold=-500;
+            short threshold = -500;
             imageBinery = RemoveAirByThreshold(imageBinery, threshold);
 
             //High-Level VQ
@@ -117,6 +117,7 @@ namespace DicomImageViewer
             lowLevelVqAlgoritm.DoAlgoritm();
 
             var incVector = lowLevelVqAlgoritm.VectorLabeleDictionary[3];
+
         }
 
         private short[,,] MakeClosingMask()
@@ -144,13 +145,13 @@ namespace DicomImageViewer
             return result;
         }
 
-        private static double[,,] RemoveAirByThreshold(double[,,] imageBinery, double threshold)
+        private static short[, ,] RemoveAirByThreshold(short[, ,] imageBinery, short threshold)
         {
-            return CommonUtils.ApplyFilterFunction(imageBinery, x=>(double)(x < threshold ? 1 : x));
+            return CommonUtils.ApplyFilterFunction(imageBinery, x => (short)(x < threshold ? 1 : x));
         }
 
 
-        private List<LocalIntenceVector> MakeIntenceVectores(double[,,] imageBinnery)
+        private List<LocalIntenceVector> MakeIntenceVectores(short[, ,] imageBinnery)
         {
             var resualt = new List<LocalIntenceVector>();
 
@@ -172,7 +173,7 @@ namespace DicomImageViewer
         }
 
 
-        private LocalIntenceVector GetLocalIntenceVectorFromImageBinnery(double[,,] imageBinnery, structs.Point3D localPoint3D, bool[,,] localIntenceMask)
+        private LocalIntenceVector GetLocalIntenceVectorFromImageBinnery(short[, ,] imageBinnery, structs.Point3D localPoint3D, bool[, ,] localIntenceMask)
         {
             LocalIntenceVector localIntenceVector = null;
 
@@ -192,7 +193,7 @@ namespace DicomImageViewer
                 localIntenceVector = new LocalIntenceVector()
                 {
                     mainPoint = localPoint3D,
-                    LocalIntenceList = new List<double>()
+                    LocalIntenceList = new List<short>()
                 };
 
                 for (int x = 0; x < localIntenceMask.GetLength(0); x++)
@@ -207,7 +208,7 @@ namespace DicomImageViewer
                                 int indexY = localPoint3D.Y - radialPoint.Y + y;
                                 int indexZ = localPoint3D.Z - radialPoint.Z + z;
 
-                                double intence = imageBinnery[indexX,indexY,indexZ];
+                                short intence = imageBinnery[indexX,indexY,indexZ];
 
                                 localIntenceVector.LocalIntenceList.Add(intence);
                             }
@@ -220,7 +221,7 @@ namespace DicomImageViewer
             return localIntenceVector;
         }
 
-        private static bool CheckBoundry(double[,,] imageBinnery, structs.Point3D localPoint3D, bool[,,] localIntenceMask, structs.Point3D radialPoint)
+        private static bool CheckBoundry(short[,,] imageBinnery, structs.Point3D localPoint3D, bool[,,] localIntenceMask, structs.Point3D radialPoint)
         {
             return localPoint3D.X - radialPoint.X >= 0 &&
                    localPoint3D.Y - radialPoint.Y >= 0 &&
@@ -320,7 +321,7 @@ namespace DicomImageViewer
             {
                 var CMI = winnerRepresentativeVector.LocalIntenceList[i];
                 var WI = localIntenceVector.LocalIntenceList[i];
-                CMI= (lernningNumber*CMI+WI)/lernningNumber+1;
+                CMI= (short) ((lernningNumber*CMI+WI)/lernningNumber+1);
                 winnerRepresentativeVector.LocalIntenceList[i] = CMI;
             }
             
@@ -350,7 +351,7 @@ namespace DicomImageViewer
 
     public class LocalIntenceVector
     {
-        public List<double> LocalIntenceList { get; set; }
+        public List<short> LocalIntenceList { get; set; }
 
         public structs.Point3D mainPoint { get; set; }
 
@@ -365,7 +366,7 @@ namespace DicomImageViewer
           this.LocalIntenceList = localIntenceVector.LocalIntenceList;
             LernningNumber = 1;
         }
-        public List<double> LocalIntenceList { get; set; }
+        public List<short> LocalIntenceList { get; set; }
 
 //        public structs.Point3D mainPoint { get; set; }
 
@@ -395,7 +396,7 @@ namespace DicomImageViewer
         public List<LocalIntenceVector> DoAlgoritm(int percent)
         {
            
-            return null;
+            return LocalLocalIntenceVectores;
         } 
 
 
