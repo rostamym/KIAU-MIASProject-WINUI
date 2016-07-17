@@ -377,24 +377,125 @@ namespace DicomImageViewer
 
     public class PCAAlgoritm
     {
-
-
         public List<LocalIntenceVector> LocalLocalIntenceVectores { get; private set; }
 
         public List<int> VarianceKL { get; private set; }
-        
+
         public PCAAlgoritm(List<LocalIntenceVector> localIntenceVectores)
         {
-            LocalLocalIntenceVectores=localIntenceVectores;
+            LocalLocalIntenceVectores = localIntenceVectores;
         }
 
+        private List<double> meanOfLocalIntenceVectors(List<LocalIntenceVector> ListOf_liv)
+        {
+            List<double> expectedValues = new List<double>();//Keep the list of expected  values of each localIntenceVectors class intances
+
+            //Calculate the expected vlaues of each localIntanceValues class intances and add it the
+            //expectedValues list
+            foreach (LocalIntenceVector liv in ListOf_liv)
+                expectedValues.Add(pca.matrixMath.ExpectedValueOfMatrix(liv));
+
+            return expectedValues;
+        }
+
+        private List<double[,]> computeSpatialAutoCorrelations(List<LocalIntenceVector> ListOf_liv, List<double> expectedValues)//Calculate all spatial autocorrelations of list of vectors
+        {
+            List<double[,]> listOfCovariance = new List<double[,]>();//keep all spatial auto correlations
+
+            double[,] covarianceMatrix;//Temp variables for keeping the covariace matrix of in process vector and expected values
+
+            for (int i = 0; i < ListOf_liv.Count; i++)
+            {
+                covarianceMatrix = pca.matrixMath.covariance(ListOf_liv[i], expectedValues[i]);//computing the special vector covariance
+                listOfCovariance.Add(covarianceMatrix);//Add it at the end of list
+            }
+
+            return listOfCovariance;
+        }
+
+        private List<double[,]> computeEigenVectors(List<double[,]> ListOfMatrix)
+        {
+            List<double[,]> listOfEigenVectors = new List<double[,]>();
+
+            foreach (var matrix in ListOfMatrix)
+            {
+                var eigenValue = pca.matrixMath.eigenValues(matrix);
+                var eigenVector = pca.matrixMath.eigenVecotrs(matrix, eigenValue);
+                listOfEigenVectors.Add(eigenVector);
+            }
+
+            return listOfEigenVectors;
+        }
+
+        private List<double[,]> tranformMatrix(List<LocalIntenceVector> listOf_liv, List<double[,]> listOfEigenVectors)
+        {
+            var listOfTransformedMatrix = new List<double[,]>();
+
+            for (int i = 0; i < listOf_liv.Count; i++)
+            {
+                var livMat = listOf_liv[i].LocalIntenceList.ToArray();
+                var result = pca.matrixMath.multipleMatrixoperator(listOfEigenVectors[i], livMat);
+
+                listOfTransformedMatrix.Add(result);
+            }
+
+            return listOfTransformedMatrix;
+        }
+
+        private List<double[,]> compareVector(List<double[,]> listOfTransformedMatirxes, int percent)
+        {
+            foreach (var matrix in listOfTransformedMatirxes)
+                for (int i = 0; i < matrix.GetLength(0); i++)
+                    for (int j = 0; j < matrix.GetLength(1); j++)
+                        if (matrix[i, j] < percent)
+                            matrix[i, j] = 0;
+            return listOfTransformedMatirxes;
+        }
+
+        private List<double[,]> reverseMatrix(List<double[,]> listOfEigenVectors)
+        {
+            List<double[,]> reverse = new List<double[,]>();
+
+            foreach (var mat in listOfEigenVectors)
+            {
+                double[,] temp = pca.matrixMath.reverseMatrix(mat);
+                reverse.Add(temp);
+            }
+
+            return reverse;
+        }
+
+        private object tranformMatrix(List<double[,]> listOfCV, List<double[,]> listOfRevesedEigenVectors)
+        {
+            var listOfTransformedMatrix = new List<double[,]>();
+
+            for (int i = 0; i < listOfCV.Count; i++)
+            {
+                var result = pca.matrixMath.multipleMatrixoperator(listOfRevesedEigenVectors[i], listOfCV[i]);
+
+                listOfTransformedMatrix.Add(result);
+            }
+
+            return listOfTransformedMatrix;
+        }
 
         public List<LocalIntenceVector> DoAlgoritm(int percent)
         {
-           
-            return LocalLocalIntenceVectores;
-        } 
+            var listOfExpectedValues = meanOfLocalIntenceVectors(LocalLocalIntenceVectores);
 
+            var listOfCovariaces = computeSpatialAutoCorrelations(LocalLocalIntenceVectores, listOfExpectedValues);
+
+            var listOfEigenVectors = computeEigenVectors(listOfCovariaces);
+
+            var listOfTransformedMatirxes = tranformMatrix(LocalLocalIntenceVectores, listOfEigenVectors);
+
+            var listOfcomparedVectors = compareVector(listOfTransformedMatirxes, percent);
+
+            var listOfRevesedEigenVectors = reverseMatrix(listOfEigenVectors);
+
+            var listOfReTransformedMatirxes = tranformMatrix(listOfcomparedVectors, listOfRevesedEigenVectors);
+            return null;
+        }
 
 
     }
