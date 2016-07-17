@@ -1417,6 +1417,26 @@ namespace MedicalCore
 
      }
 
+     private void iNCDetectionToolStripMenuItem_Click(object sender, EventArgs e)
+     {
+         if (imageProcessingType==2)
+             new PulmonaryNodulesDetection().FindInc(inputSlices3D16);
+     }
+
+     private void segmentChestVolumeToolStripMenuItem_Click(object sender, EventArgs e)
+     {
+         if (imageProcessingType == 2)
+         {
+             outputSlices3D16=PulmonaryNodulesDetection.RemoveAirByThreshold(inputSlices3D16, -500);
+             showInPicturebox2(sliceNumber);
+         }
+     }
+
+     private void segmentPulmonaryToolStripMenuItem_Click(object sender, EventArgs e)
+     {
+
+     }
+
     
    
 

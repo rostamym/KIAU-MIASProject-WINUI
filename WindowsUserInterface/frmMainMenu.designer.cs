@@ -106,6 +106,13 @@
             this.convertToBVDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dShowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testArraySortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.spesialOperationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pulameryNodulDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.segmentChestVolumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.segmentPulmonaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.iNCDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.roleBaseReduseFPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sVMReduseFPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnZoomIn = new System.Windows.Forms.Button();
             this.btnZoomOut = new System.Windows.Forms.Button();
             this.lblZoomRate = new System.Windows.Forms.Label();
@@ -144,7 +151,8 @@
             this.menuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.annotateToolStripMenuItem,
-            this.baseOperationsToolStripMenuItem});
+            this.baseOperationsToolStripMenuItem,
+            this.spesialOperationToolStripMenuItem});
             this.menuStrip2.Location = new System.Drawing.Point(0, 0);
             this.menuStrip2.Name = "menuStrip2";
             this.menuStrip2.Size = new System.Drawing.Size(1160, 24);
@@ -436,7 +444,26 @@
             this.toolStripMenuItem2.Size = new System.Drawing.Size(116, 22);
             this.toolStripMenuItem2.Text = "2D";
             // 
-           
+            // dilation2DToolStripMenuItem
+            // 
+            this.dilation2DToolStripMenuItem.Name = "dilation2DToolStripMenuItem";
+            this.dilation2DToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
+            // 
+            // erosion2DToolStripMenuItem
+            // 
+            this.erosion2DToolStripMenuItem.Name = "erosion2DToolStripMenuItem";
+            this.erosion2DToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
+            // 
+            // opening2DToolStripMenuItem
+            // 
+            this.opening2DToolStripMenuItem.Name = "opening2DToolStripMenuItem";
+            this.opening2DToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
+            // 
+            // closing2DToolStripMenuItem
+            // 
+            this.closing2DToolStripMenuItem.Name = "closing2DToolStripMenuItem";
+            this.closing2DToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
+            // 
             // dToolStripMenuItem
             // 
             this.dToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -448,7 +475,25 @@
             this.dToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.dToolStripMenuItem.Text = "3D";
             // 
-          
+            // dilation3DToolStripMenuItem
+            // 
+            this.dilation3DToolStripMenuItem.Name = "dilation3DToolStripMenuItem";
+            this.dilation3DToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
+            // 
+            // erosion3DToolStripMenuItem
+            // 
+            this.erosion3DToolStripMenuItem.Name = "erosion3DToolStripMenuItem";
+            this.erosion3DToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
+            // 
+            // opening3DToolStripMenuItem
+            // 
+            this.opening3DToolStripMenuItem.Name = "opening3DToolStripMenuItem";
+            this.opening3DToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
+            // 
+            // closing3DToolStripMenuItem
+            // 
+            this.closing3DToolStripMenuItem.Name = "closing3DToolStripMenuItem";
+            this.closing3DToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
             // 
             // histogramToolStripMenuItem
             // 
@@ -682,6 +727,59 @@
             this.testArraySortToolStripMenuItem.Text = "test array sort";
             this.testArraySortToolStripMenuItem.Click += new System.EventHandler(this.testArraySortToolStripMenuItem_Click);
             // 
+            // spesialOperationToolStripMenuItem
+            // 
+            this.spesialOperationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pulameryNodulDetectionToolStripMenuItem});
+            this.spesialOperationToolStripMenuItem.Name = "spesialOperationToolStripMenuItem";
+            this.spesialOperationToolStripMenuItem.Size = new System.Drawing.Size(111, 20);
+            this.spesialOperationToolStripMenuItem.Text = "Spesial Operation";
+            // 
+            // pulameryNodulDetectionToolStripMenuItem
+            // 
+            this.pulameryNodulDetectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.segmentChestVolumeToolStripMenuItem,
+            this.segmentPulmonaryToolStripMenuItem,
+            this.iNCDetectionToolStripMenuItem,
+            this.roleBaseReduseFPToolStripMenuItem,
+            this.sVMReduseFPToolStripMenuItem});
+            this.pulameryNodulDetectionToolStripMenuItem.Name = "pulameryNodulDetectionToolStripMenuItem";
+            this.pulameryNodulDetectionToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+            this.pulameryNodulDetectionToolStripMenuItem.Text = "Pulmonary Nodule Detection";
+            // 
+            // segmentChestVolumeToolStripMenuItem
+            // 
+            this.segmentChestVolumeToolStripMenuItem.Name = "segmentChestVolumeToolStripMenuItem";
+            this.segmentChestVolumeToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.segmentChestVolumeToolStripMenuItem.Text = "Segment Chest Volume ";
+            this.segmentChestVolumeToolStripMenuItem.Click += new System.EventHandler(this.segmentChestVolumeToolStripMenuItem_Click);
+            // 
+            // segmentPulmonaryToolStripMenuItem
+            // 
+            this.segmentPulmonaryToolStripMenuItem.Name = "segmentPulmonaryToolStripMenuItem";
+            this.segmentPulmonaryToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.segmentPulmonaryToolStripMenuItem.Text = "Segment Pulmonary";
+            this.segmentPulmonaryToolStripMenuItem.Click += new System.EventHandler(this.segmentPulmonaryToolStripMenuItem_Click);
+            // 
+            // iNCDetectionToolStripMenuItem
+            // 
+            this.iNCDetectionToolStripMenuItem.Name = "iNCDetectionToolStripMenuItem";
+            this.iNCDetectionToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.iNCDetectionToolStripMenuItem.Text = "INC Detection";
+            this.iNCDetectionToolStripMenuItem.Click += new System.EventHandler(this.iNCDetectionToolStripMenuItem_Click);
+            // 
+            // roleBaseReduseFPToolStripMenuItem
+            // 
+            this.roleBaseReduseFPToolStripMenuItem.Name = "roleBaseReduseFPToolStripMenuItem";
+            this.roleBaseReduseFPToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.roleBaseReduseFPToolStripMenuItem.Text = "Role Base Reduse FP";
+            // 
+            // sVMReduseFPToolStripMenuItem
+            // 
+            this.sVMReduseFPToolStripMenuItem.Name = "sVMReduseFPToolStripMenuItem";
+            this.sVMReduseFPToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.sVMReduseFPToolStripMenuItem.Text = "SVM Reduse FP";
+            // 
             // btnZoomIn
             // 
             this.btnZoomIn.Location = new System.Drawing.Point(668, 27);
@@ -825,7 +923,6 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-           
             // pictureBoxZoomPan
             // 
             this.pictureBoxZoomPan.BackColor = System.Drawing.Color.White;
@@ -1015,6 +1112,13 @@
         private System.Windows.Forms.ToolStripMenuItem dShowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem global1ThreshildToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testArraySortToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem spesialOperationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pulameryNodulDetectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem segmentChestVolumeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem segmentPulmonaryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem iNCDetectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem roleBaseReduseFPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sVMReduseFPToolStripMenuItem;
     }
 }
 
