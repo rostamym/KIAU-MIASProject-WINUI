@@ -254,16 +254,12 @@ namespace DicomImageViewer
             VarianceList = varianceList;
             K = k;
             LocalIntenceVectors = localIntenceVectors;
-
-
         }
 
 
 
         public void DoAlgoritm()
         {
-            
-
 
             foreach (var klValue in VarianceList)
             {
