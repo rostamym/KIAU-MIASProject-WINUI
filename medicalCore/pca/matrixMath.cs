@@ -73,14 +73,40 @@ namespace DicomImageViewer.pca
             return covarianceMatrix;
         }
 
-        public static double[] eigenValues(double[,] matrix)
+        public static double[,] eigenValues(double[,] matrix)
         {
-            throw new NotImplementedException();
+            if (matrix.GetLength(0) != matrix.GetLength(1))
+                throw new invalidMatrixSizeForOperation();
+
+            MLApp.MLApp matlab = new MLApp.MLApp();//Initialize matlab object which connect the matlab program
+
+            object result = null;//result which get the raw data from matlab program
+
+            matlab.Feval("eig", 1,out result, matrix);//executing the eig method from matlab which take a matrix and return 1 result
+
+            object[] res = result as object[];
+
+            double[,] eigenValuesMatrix = res[0] as double[,];//cast the data from matlab to double array
+
+            return eigenValuesMatrix;
         }
 
-        public static double[,] eigenVecotrs(double[,] matrix, double[] eigenvalues)
+        public static double[,] eigenVecotrs(double[,] matrix)
         {
-            throw new NotImplementedException();
+            if (matrix.GetLength(0) != matrix.GetLength(1))
+                throw new invalidMatrixSizeForOperation();
+
+            MLApp.MLApp matlab = new MLApp.MLApp();//Initialize matlab object which connect the matlab program
+
+            object result = null;//result which get the raw data from matlab program
+
+            matlab.Feval("eig", 2, out result, matrix);//executing the eig method from matlab which take a matrix and return 1 result
+
+            object[] res = result as object[];
+
+            double[,] eigenVectorsMatrix = res[0] as double[,];//cast the data from matlab to double array
+
+            return eigenVectorsMatrix;
         }
 
         public static double[,] reverseMatrix(double[,] mat)
@@ -106,7 +132,7 @@ namespace DicomImageViewer.pca
 
             for (int row = 0; row < matrix1.GetLength(1); row++)
             {
-                for(int col =0; col < matrix2.GetLength(0))
+                for(int col =0; col < matrix2.GetLength(0);col++)
                 {
                     double temp = 0;
 

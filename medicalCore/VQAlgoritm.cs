@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using Accord.Statistics.Analysis;
 
 namespace DicomImageViewer
 {
@@ -419,8 +420,7 @@ namespace DicomImageViewer
 
             foreach (var matrix in ListOfMatrix)
             {
-                var eigenValue = pca.matrixMath.eigenValues(matrix);
-                var eigenVector = pca.matrixMath.eigenVecotrs(matrix, eigenValue);
+                var eigenVector = pca.matrixMath.eigenVecotrs(matrix);
                 listOfEigenVectors.Add(eigenVector);
             }
 
@@ -465,7 +465,7 @@ namespace DicomImageViewer
             return reverse;
         }
 
-        private object tranformMatrix(List<double[,]> listOfCV, List<double[,]> listOfRevesedEigenVectors)
+        private List<double[,]> tranformMatrix(List<double[,]> listOfCV, List<double[,]> listOfRevesedEigenVectors)
         {
             var listOfTransformedMatrix = new List<double[,]>();
 
@@ -477,6 +477,26 @@ namespace DicomImageViewer
             }
 
             return listOfTransformedMatrix;
+        }
+
+        private List<LocalIntenceVector> transformMatrixToVector(List<double[,]> ListOfMat)
+        {
+            List<LocalIntenceVector> liv = new List<LocalIntenceVector>();
+            foreach(var mat in ListOfMat)
+            {
+                var temp = new LocalIntenceVector();
+                for (int i = 0; i < mat.GetLength(0); i++)
+                {
+                    for (int j = 0; j < mat.GetLength(1); j++)
+                    {
+                        temp.LocalIntenceList.Add((short)mat[i, j]);
+                    }
+                    Console.WriteLine("");
+                }
+                liv.Add(temp);
+            }
+
+            return liv;
         }
 
         public List<LocalIntenceVector> DoAlgoritm(int percent)
@@ -494,9 +514,40 @@ namespace DicomImageViewer
             var listOfRevesedEigenVectors = reverseMatrix(listOfEigenVectors);
 
             var listOfReTransformedMatirxes = tranformMatrix(listOfcomparedVectors, listOfRevesedEigenVectors);
+
+
+
+            var newLocalLocalIntenceVectores = transformMatrixToVector(listOfReTransformedMatirxes);
+
+            var meanOfVectors = meanOfLocalIntenceVectors(newLocalLocalIntenceVectores);
+
+            var covariceOfVectors = computeSpatialAutoCorrelations(newLocalLocalIntenceVectores, meanOfVectors);
             return null;
         }
 
+        public List<LocalIntenceVector> DoAlgoritm2(int percent)
+        {
+            var rowCount = this.LocalLocalIntenceVectores.Count;
+            var colCount = this.LocalLocalIntenceVectores[0].LocalIntenceList.Count;
+            var arrayData = new double[rowCount, colCount];
+
+            for (int row = 0; row < rowCount; row++)
+            {
+                for (int col = 0; col < colCount; col++)
+                {
+                    arrayData[row, col] = LocalLocalIntenceVectores[row].LocalIntenceList[col];
+                }
+            }
+
+            var pca = new PrincipalComponentAnalysis(arrayData, PrincipalComponentAnalysis.AnalysisMethod.Correlation);
+            pca.Compute();
+//            pca.Transform(arrayData, 95);
+//            pca.
+//            this.VarianceKL = pca.EigenValues.ToList().ConvertAll(x => (int)x );
+            
+            
+            return null;
+        }
 
     }
 }
