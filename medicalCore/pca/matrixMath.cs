@@ -52,25 +52,20 @@ namespace DicomImageViewer.pca
             return resutl;
         }
 
-        public static double[,] covariance(LocalIntenceVector liv, double e)//computing the special vector covariance
+        public static double covariance(double[] list1, double e1, double[] list2, double e2)// omputing the special vector covariance
         {
-            int count = liv.LocalIntenceList.Count;//number of elements in vector
-            double[,] covarianceMatrix = new double[count, count];
+            if (list1.Length != list2.Length)
+                throw new invalidMatrixSizeForOperation();
+
+            double _covariance = 0;
+            int count = list1.Length;
 
             for (int i = 0; i < count; i++)
             {
-
-                for (int j = 0; j < count; j++)
-                {
-                    int index = j + i;
-                    if (index > count)
-                        index %= count;
-                    covarianceMatrix[i, j] = (liv.LocalIntenceList[j] - e) * (liv.LocalIntenceList[index] - e);
-
-                }
+                _covariance += (list1[i] - e1) * (list2[i] - e2);
             }
 
-            return covarianceMatrix;
+            return _covariance;
         }
 
         public static double[,] eigenValues(double[,] matrix)

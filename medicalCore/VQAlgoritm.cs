@@ -96,7 +96,7 @@ namespace DicomImageViewer
             //High-Level VQ
             List<LocalIntenceVector> intenceVectores = MakeIntenceVectores(imageBinery);
             var pcaAlgoritm = new PCAAlgoritm(intenceVectores);
-            var localIntenceVectores = pcaAlgoritm.DoAlgoritm(95);
+            var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
             var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, localIntenceVectores);
             highLevelVqAlgoritm.DoAlgoritm();
 
@@ -376,155 +376,67 @@ namespace DicomImageViewer
     }
 
 
-    public class PCAAlgoritm
+    public class PCAAlgoritm : pca.pcaBase
     {
         public List<LocalIntenceVector> LocalLocalIntenceVectores { get; private set; }
 
         public List<int> VarianceKL { get; private set; }
 
-        public PCAAlgoritm(List<LocalIntenceVector> localIntenceVectores)
+        public PCAAlgoritm(List<LocalIntenceVector> localIntensityVectores):base(convertToArray(localIntensityVectores))
         {
-            LocalLocalIntenceVectores = localIntenceVectores;
+           
+
+            LocalLocalIntenceVectores = localIntensityVectores;
+
+            
         }
 
-        private List<double> meanOfLocalIntenceVectors(List<LocalIntenceVector> ListOf_liv)
+        private static double[,] convertToArray(List<LocalIntenceVector> localIntensityVectores)
         {
-            List<double> expectedValues = new List<double>();//Keep the list of expected  values of each localIntenceVectors class intances
+            int numberOfDimensions = localIntensityVectores[0].LocalIntenceList.Count;
+            int numberOfElements = localIntensityVectores.Count; //The number of elements per each dimension
 
-            //Calculate the expected vlaues of each localIntanceValues class intances and add it the
-            //expectedValues list
-            foreach (LocalIntenceVector liv in ListOf_liv)
-                expectedValues.Add(pca.matrixMath.ExpectedValueOfMatrix(liv));
+            double[,] array = new double[numberOfDimensions,numberOfElements];
 
-            return expectedValues;
-        }
-
-        private List<double[,]> computeSpatialAutoCorrelations(List<LocalIntenceVector> ListOf_liv, List<double> expectedValues)//Calculate all spatial autocorrelations of list of vectors
-        {
-            List<double[,]> listOfCovariance = new List<double[,]>();//keep all spatial auto correlations
-
-            double[,] covarianceMatrix;//Temp variables for keeping the covariace matrix of in process vector and expected values
-
-            for (int i = 0; i < ListOf_liv.Count; i++)
+            for(int i =0; i < numberOfElements; i++)
             {
-                covarianceMatrix = pca.matrixMath.covariance(ListOf_liv[i], expectedValues[i]);//computing the special vector covariance
-                listOfCovariance.Add(covarianceMatrix);//Add it at the end of list
+                LocalIntenceVector liv = localIntensityVectores[i];
+
+                for(int j =0; j< numberOfDimensions; j++)
+                {
+                    array[j, i] = liv.LocalIntenceList[j];
+                }
             }
 
-            return listOfCovariance;
+            return array;
         }
 
-        private List<double[,]> computeEigenVectors(List<double[,]> ListOfMatrix)
-        {
-            List<double[,]> listOfEigenVectors = new List<double[,]>();
-
-            foreach (var matrix in ListOfMatrix)
-            {
-                var eigenVector = pca.matrixMath.eigenVecotrs(matrix);
-                listOfEigenVectors.Add(eigenVector);
-            }
-
-            return listOfEigenVectors;
-        }
-
-        private List<double[,]> tranformMatrix(List<LocalIntenceVector> listOf_liv, List<double[,]> listOfEigenVectors)
-        {
-            var listOfTransformedMatrix = new List<double[,]>();
-
-            for (int i = 0; i < listOf_liv.Count; i++)
-            {
-                var livMat = listOf_liv[i].LocalIntenceList.ToArray();
-                var result = pca.matrixMath.multipleMatrixoperator(listOfEigenVectors[i], livMat);
-
-                listOfTransformedMatrix.Add(result);
-            }
-
-            return listOfTransformedMatrix;
-        }
-
-        private List<double[,]> compareVector(List<double[,]> listOfTransformedMatirxes, int percent)
-        {
-            foreach (var matrix in listOfTransformedMatirxes)
-                for (int i = 0; i < matrix.GetLength(0); i++)
-                    for (int j = 0; j < matrix.GetLength(1); j++)
-                        if (matrix[i, j] < percent)
-                            matrix[i, j] = 0;
-            return listOfTransformedMatirxes;
-        }
-
-        private List<double[,]> reverseMatrix(List<double[,]> listOfEigenVectors)
-        {
-            List<double[,]> reverse = new List<double[,]>();
-
-            foreach (var mat in listOfEigenVectors)
-            {
-                double[,] temp = pca.matrixMath.reverseMatrix(mat);
-                reverse.Add(temp);
-            }
-
-            return reverse;
-        }
-
-        private List<double[,]> tranformMatrix(List<double[,]> listOfCV, List<double[,]> listOfRevesedEigenVectors)
-        {
-            var listOfTransformedMatrix = new List<double[,]>();
-
-            for (int i = 0; i < listOfCV.Count; i++)
-            {
-                var result = pca.matrixMath.multipleMatrixoperator(listOfRevesedEigenVectors[i], listOfCV[i]);
-
-                listOfTransformedMatrix.Add(result);
-            }
-
-            return listOfTransformedMatrix;
-        }
-
-        private List<LocalIntenceVector> transformMatrixToVector(List<double[,]> ListOfMat)
+        private List<LocalIntenceVector> transformMatrixToVector(double[][] mat)
         {
             List<LocalIntenceVector> liv = new List<LocalIntenceVector>();
-            foreach(var mat in ListOfMat)
+
+
+            var temp = new LocalIntenceVector();
+            for (int i = 0; i < mat[0].Length; i++)
             {
-                var temp = new LocalIntenceVector();
-                for (int i = 0; i < mat.GetLength(0); i++)
+                for (int j = 0; j < mat.Length; j++)
                 {
-                    for (int j = 0; j < mat.GetLength(1); j++)
-                    {
-                        temp.LocalIntenceList.Add((short)mat[i, j]);
-                    }
-                    Console.WriteLine("");
+                    temp.LocalIntenceList.Add((short)mat[j][i]);
                 }
                 liv.Add(temp);
             }
 
             return liv;
         }
-
-        public List<LocalIntenceVector> DoAlgoritm(int percent)
+        
+        public  List<LocalIntenceVector> DoAlgorithm(int percent)
         {
-            var listOfExpectedValues = meanOfLocalIntenceVectors(LocalLocalIntenceVectores);
+            var transformedImg = base.DoAlgorithm(percent);
 
-            var listOfCovariaces = computeSpatialAutoCorrelations(LocalLocalIntenceVectores, listOfExpectedValues);
+            var TransformedLocalIntensityVectors = transformMatrixToVector(transformedImg);
 
-            var listOfEigenVectors = computeEigenVectors(listOfCovariaces);
-
-            var listOfTransformedMatirxes = tranformMatrix(LocalLocalIntenceVectores, listOfEigenVectors);
-
-            var listOfcomparedVectors = compareVector(listOfTransformedMatirxes, percent);
-
-            var listOfRevesedEigenVectors = reverseMatrix(listOfEigenVectors);
-
-            var listOfReTransformedMatirxes = tranformMatrix(listOfcomparedVectors, listOfRevesedEigenVectors);
-
-
-
-            var newLocalLocalIntenceVectores = transformMatrixToVector(listOfReTransformedMatirxes);
-
-            var meanOfVectors = meanOfLocalIntenceVectors(newLocalLocalIntenceVectores);
-
-            var covariceOfVectors = computeSpatialAutoCorrelations(newLocalLocalIntenceVectores, meanOfVectors);
-            return null;
+            return TransformedLocalIntensityVectors;
         }
-
         public List<LocalIntenceVector> DoAlgoritm2(int percent)
         {
             var rowCount = this.LocalLocalIntenceVectores.Count;
@@ -539,23 +451,8 @@ namespace DicomImageViewer
                 }
             }
 
-            var pca = new PrincipalComponentAnalysis(arrayData, PrincipalComponentAnalysis.AnalysisMethod.Correlation);
-            pca.Compute();
-            int components = 0;
-
-            foreach (var component in pca.Components)
-            {
-                if (component.CumulativeProportion * 100 > percent)
-                {
-                    components++;
-                }
-
-
-            }
-
-            var newDataAfterProjection = pca.Transform(arrayData, components);
-
-
+//            var pca = new PrincipalComponentAnalysis(arrayData, PrincipalComponentAnalysis.AnalysisMethod.Correlation);
+//            pca.Compute();
 //            pca.Transform(arrayData, 95);
 //            pca.
 //            this.VarianceKL = pca.EigenValues.ToList().ConvertAll(x => (int)x );
