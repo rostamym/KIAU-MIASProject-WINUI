@@ -541,6 +541,21 @@ namespace DicomImageViewer
 
             var pca = new PrincipalComponentAnalysis(arrayData, PrincipalComponentAnalysis.AnalysisMethod.Correlation);
             pca.Compute();
+            int components = 0;
+
+            foreach (var component in pca.Components)
+            {
+                if (component.CumulativeProportion * 100 > percent)
+                {
+                    components++;
+                }
+
+
+            }
+
+            var newDataAfterProjection = pca.Transform(arrayData, components);
+
+
 //            pca.Transform(arrayData, 95);
 //            pca.
 //            this.VarianceKL = pca.EigenValues.ToList().ConvertAll(x => (int)x );
