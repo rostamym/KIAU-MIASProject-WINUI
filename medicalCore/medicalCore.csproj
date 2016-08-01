@@ -31,6 +31,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accord.Math">
+      <HintPath>..\..\..\pca\accord-pca-demo (1)\PCA\Accord.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.Statistics">
+      <HintPath>..\..\..\pca\accord-pca-demo (1)\PCA\Accord.Statistics.dll</HintPath>
+    </Reference>
+    <Reference Include="alglibnet2">
+      <HintPath>..\..\..\pca\alglib-3.10.0.csharp.gpl\csharp\alglibnet2.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
