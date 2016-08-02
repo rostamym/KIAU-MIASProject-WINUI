@@ -453,6 +453,7 @@ namespace DicomImageViewer
 
 //            var pca = new PrincipalComponentAnalysis(arrayData, PrincipalComponentAnalysis.AnalysisMethod.Correlation);
 //            pca.Compute();
+
 //            pca.Transform(arrayData, 95);
 //            pca.
 //            this.VarianceKL = pca.EigenValues.ToList().ConvertAll(x => (int)x );
