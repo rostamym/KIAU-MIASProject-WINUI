@@ -439,6 +439,7 @@ namespace DicomImageViewer
         }
         public List<LocalIntenceVector> DoAlgoritm2(int percent)
         {
+            var resualt = new List<LocalIntenceVector>();
             var rowCount = this.LocalLocalIntenceVectores.Count;
             var colCount = this.LocalLocalIntenceVectores[0].LocalIntenceList.Count;
             var arrayData = new double[rowCount, colCount];
@@ -451,15 +452,30 @@ namespace DicomImageViewer
                 }
             }
 
-//            var pca = new PrincipalComponentAnalysis(arrayData, PrincipalComponentAnalysis.AnalysisMethod.Correlation);
-//            pca.Compute();
+            var pca = new PrincipalComponentAnalysis(arrayData, PrincipalComponentAnalysis.AnalysisMethod.Correlation);
+            pca.Compute();
+            var numberOfComponents = pca.GetNumberOfComponents(95);
+            var transform = pca.Transform(arrayData, numberOfComponents);
+            this.VarianceKL = pca.EigenValues.ToList().ConvertAll(x => (int)x );
 
-//            pca.Transform(arrayData, 95);
-//            pca.
-//            this.VarianceKL = pca.EigenValues.ToList().ConvertAll(x => (int)x );
+            for (int row = 0; row < transform.GetLength(0); row++)
+            {
+                var localIntenceVector = new LocalIntenceVector();
+                var oldLocalVector = this.LocalLocalIntenceVectores[row];
+                localIntenceVector.mainPoint = oldLocalVector.mainPoint;
+                localIntenceVector.Lable = oldLocalVector.Lable;
+                localIntenceVector.LocalIntenceList = new List<short>();
+
+                for (int col = 0; col < transform.GetLength(1); col++)
+                {
+                    localIntenceVector.LocalIntenceList.Add((short) transform[row, col]);
+                }
+                resualt.Add(localIntenceVector);
+
+            }
             
             
-            return null;
+            return resualt;
         }
 
     }
