@@ -995,6 +995,7 @@
             this.Name = "frmMainMenu";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Medical Imaging";
+            this.Load += new System.EventHandler(this.frmMainMenu_Load);
             this.menuStrip2.ResumeLayout(false);
             this.menuStrip2.PerformLayout();
             this.groupBox4.ResumeLayout(false);

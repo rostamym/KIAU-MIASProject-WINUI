@@ -9,12 +9,12 @@ namespace DicomImageViewer.Base
     public class CommonUtils
     {
 
-        public static T[, ,] ApplyFilterFunction<T>(T[, ,] pixes, Func<T, T> func)
+        public static TK[, ,] ApplyFilterFunction<T,TK>(T[, ,] pixes, Func<T, TK> func)
         {
             var maxRowlength = pixes.GetLength(0);
             var maxColLength = pixes.GetLength(1);
             var maxDepthLength = pixes.GetLength(2);
-            var result = new T[maxRowlength, maxColLength, maxDepthLength];
+            var result = new TK[maxRowlength, maxColLength, maxDepthLength];
 
             for (int rowIndex = 0; rowIndex < maxRowlength; rowIndex++)
                 for (int colIndex = 0; colIndex < maxColLength; colIndex++)
@@ -23,26 +23,12 @@ namespace DicomImageViewer.Base
 
             return result;
         }
-        public static double[, ,] ApplyFilterFunction(double[, ,] pixes, Func<double, double> func)
+
+        public static TK[,] ApplyFilterFunction<T, TK>(T[,] pixes, Func<T, TK> func)
         {
             var maxRowlength = pixes.GetLength(0);
             var maxColLength = pixes.GetLength(1);
-            var maxDepthLength = pixes.GetLength(3);
-            var result = new double[maxRowlength, maxColLength, maxDepthLength];
-
-            for (int rowIndex = 0; rowIndex < maxRowlength; rowIndex++)
-                for (int colIndex = 0; colIndex < maxColLength; colIndex++)
-                    for (int DepthIndex = 0; DepthIndex < maxDepthLength; DepthIndex++)
-                        result[rowIndex, colIndex, maxDepthLength] = func(pixes[rowIndex, colIndex, DepthIndex]);
-
-            return result;
-        }
-
-        public static short[,] ApplyFilterFunction(short[,] pixes, Func<short, short> func)
-        {
-            var maxRowlength = pixes.GetLength(0);
-            var maxColLength = pixes.GetLength(1);
-            var result = new short[maxRowlength, maxColLength];
+            var result = new TK[maxRowlength, maxColLength];
 
             for (int rowIndex = 0; rowIndex < maxRowlength; rowIndex++)
             {

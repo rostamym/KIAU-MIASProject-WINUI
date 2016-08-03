@@ -10,6 +10,120 @@ namespace DicomImageViewer
 {
     public class PulmonaryNodulesDetection
     {
+        enum EnMaskType
+        {
+            ONE=1,TWO=2,THREE=3,
+        }
+        public PulmonaryNodulesDetection():this(1)
+        {
+
+        }
+
+        public PulmonaryNodulesDetection(int type)
+        {
+            this.LocalIntenceMask= GetInstanceMask(type);
+        }
+
+        private bool[,,] GetInstanceMask(int type)
+        {
+            EnMaskType maskType = (EnMaskType) type;
+            short[,,] resualt;
+
+            switch (maskType)
+            {
+                case EnMaskType.ONE:
+                    resualt = new short[,,]
+                    {
+                        {
+                            {0, 0, 0},
+                            {0, 1, 0},
+                            {0, 0, 0}
+                        },
+                        {
+                            {0, 1, 0},
+                            {1, 1, 1},
+                            {0, 1, 0}
+                        },
+                        {
+                            {0, 0, 0},
+                            {0, 1, 0},
+                            {0, 0, 0}
+                        },
+                    };
+                    break;
+                case EnMaskType.TWO:
+                    resualt = new short[,,]
+                    {
+                        {
+                            {0, 0, 0},
+                            {0, 1, 0},
+                            {0, 0, 0}
+                        },
+                        {
+                            {1, 1, 1},
+                            {1, 1, 1},
+                            {1, 1, 1}
+                        },
+                        {
+                            {0, 0, 0},
+                            {0, 1, 0},
+                            {0, 0, 0}
+                        },
+                    };
+                    break;
+                case EnMaskType.THREE:
+                    resualt = new short[,,]
+                    {
+                        {
+                            {0, 0, 0, 0, 0},
+                            {0, 0, 1, 0, 0},
+                            {0, 1, 1, 1, 0},
+                            {0, 0, 1, 0, 0},
+                            {0, 0, 0, 0, 0},
+                        },
+                        {
+                            {0, 0, 1, 0, 0},
+                            {0, 1, 1, 1, 0},
+                            {1, 1, 1, 1, 1},
+                            {0, 1, 1, 1, 0},
+                            {0, 0, 1, 0, 0},
+                        },
+                        {
+                            {0, 0, 0, 0, 0},
+                            {0, 0, 1, 0, 0},
+                            {0, 1, 1, 1, 0},
+                            {0, 0, 1, 0, 0},
+                            {0, 0, 0, 0, 0},
+                        },
+                       
+                    };
+                    break;
+                default:
+                    resualt = new short[,,]
+                    {
+                        {
+                            {0, 0, 0},
+                            {0, 1, 0},
+                            {0, 0, 0}
+                        },
+                        {
+                            {0, 1, 0},
+                            {1, 1, 1},
+                            {0, 1, 0}
+                        },
+                        {
+                            {0, 0, 0},
+                            {0, 1, 0},
+                            {0, 0, 0}
+                        },
+                    };
+                    break;
+
+            }
+
+            return CommonUtils.ApplyFilterFunction(resualt, x => x == 1);
+        }
+
         public Boolean[, ,] LocalIntenceMask { get; set; }
 
         public void FindInc(short[, ,] imageBinery)
@@ -86,10 +200,11 @@ namespace DicomImageViewer
             {
                 for (int y = 0; y < imageBinnery.GetLength(1); y++)
                 {
-                    for (int z = 0; z < imageBinnery.GetLength(0); z++)
+                    for (int z = 0; z < imageBinnery.GetLength(2); z++)
                     {
                         var point3D = new structs.Point3D() { X = x, Y = y, Z = z };
                         LocalIntenceVector vector = GetLocalIntenceVectorFromImageBinnery(imageBinnery, point3D, LocalIntenceMask);
+                        if(vector!= null)
                         resualt.Add(vector);
                     }
                 }
@@ -126,7 +241,7 @@ namespace DicomImageViewer
                 {
                     for (int y = 0; y < localIntenceMask.GetLength(1); y++)
                     {
-                        for (int z = 0; z < localIntenceMask.GetLength(0); z++)
+                        for (int z = 0; z < localIntenceMask.GetLength(2); z++)
                         {
                             if (localIntenceMask[x, y, z])
                             {
@@ -153,8 +268,8 @@ namespace DicomImageViewer
                    localPoint3D.Y - radialPoint.Y >= 0 &&
                    localPoint3D.Z - radialPoint.Z >= 0 &&
                    localPoint3D.X - radialPoint.X + localIntenceMask.GetLength(0) < imageBinnery.GetLength(0) &&
-                   localPoint3D.X - radialPoint.X + localIntenceMask.GetLength(0) < imageBinnery.GetLength(0) &&
-                   localPoint3D.X - radialPoint.X + localIntenceMask.GetLength(0) < imageBinnery.GetLength(0);
+                   localPoint3D.Y - radialPoint.Y + localIntenceMask.GetLength(1) < imageBinnery.GetLength(1) &&
+                   localPoint3D.Z - radialPoint.Z + localIntenceMask.GetLength(2) < imageBinnery.GetLength(2);
         }
     }
 }
