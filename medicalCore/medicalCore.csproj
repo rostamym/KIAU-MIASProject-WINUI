@@ -52,17 +52,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\CommonUtils.cs" />
     <Compile Include="BitmapOperations.cs" />
     <Compile Include="Dialog.cs" />
     <Compile Include="Filtering.cs" />
     <Compile Include="Morphology.cs" />
-    <Compile Include="pca\invalidMatrixSizeForOperation.cs" />
-    <Compile Include="pca\matrixMath.cs" />
-    <Compile Include="pca\pcaBase.cs" />
+    <Compile Include="PCA\invalidMatrixSizeForOperation.cs" />
+    <Compile Include="PCA\matrixMath.cs" />
+    <Compile Include="VQ\AccordPcaAlgorithm.cs" />
+    <Compile Include="VQ\MyPcaAlgoritm.cs" />
+    <Compile Include="PCA\pcaBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PulmonaryNodulesDetection.cs" />
     <Compile Include="structs.cs" />
     <Compile Include="Thresholding.cs" />
-    <Compile Include="VQAlgoritm.cs" />
+    <Compile Include="VQ\IPcaAlgorithm.cs" />
+    <Compile Include="VQ\LocalIntenceVector.cs" />
+    <Compile Include="VQ\RepresentativeVector.cs" />
+    <Compile Include="VQ\VQAlgoritm.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="MLApp">
@@ -75,6 +82,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
