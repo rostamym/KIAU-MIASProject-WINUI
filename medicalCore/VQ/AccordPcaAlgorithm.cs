@@ -57,6 +57,9 @@ namespace DicomImageViewer.VQ
             }
 
 
+
+
+
             return resualt;
         }
 

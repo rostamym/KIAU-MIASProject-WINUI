@@ -152,12 +152,19 @@ namespace DicomImageViewer
             var structElement3D = MakeClosingMask();
             new Morphology().closing3D(lungMask, structElement3D);
 
+            ApplyMaskAndRemoveUnusedLocalIntenceVectores(localIntenceVectores, lungMask);
+
             // low level VQ
             var lowLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 4, localIntenceVectores);
             lowLevelVqAlgoritm.DoAlgoritm();
 
             var incVector = lowLevelVqAlgoritm.VectorLabeleDictionary[3];
 
+        }
+
+        private static void ApplyMaskAndRemoveUnusedLocalIntenceVectores(List<LocalIntenceVector> localIntenceVectores, short[,,] lungMask)
+        {
+            localIntenceVectores.RemoveAll(x => lungMask[x.mainPoint.X, x.mainPoint.Y, x.mainPoint.Z] ==0  )  ;
         }
 
         private short[, ,] MakeClosingMask()
@@ -180,8 +187,7 @@ namespace DicomImageViewer
         {
             var result = new short[maskSize.X, maskSize.Y, maskSize.Z];
             CommonUtils.ApplyFilterFunction(result, x => 0);
-            localIntenceVectors.ForEach(x => result[x.mainPoint.X, x.mainPoint.Y, x.mainPoint.Z] = 0);
-
+            localIntenceVectors.ForEach(x => result[x.mainPoint.X, x.mainPoint.Y, x.mainPoint.Z] = 1);
             return result;
         }
 

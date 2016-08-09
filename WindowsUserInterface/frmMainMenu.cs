@@ -1439,8 +1439,8 @@ namespace MedicalCore
 
      private void frmMainMenu_Load(object sender, EventArgs e)
      {
-         this.openDICOM3DToolStripMenuItem_Click(sender, e);
-         this.iNCDetectionToolStripMenuItem_Click(sender,e);
+//         this.openDICOM3DToolStripMenuItem_Click(sender, e);
+//         this.iNCDetectionToolStripMenuItem_Click(sender,e);
      }
 
     

@@ -28,6 +28,7 @@ namespace DicomImageViewer.VQ
             VarianceList = varianceList;
             K = k;
             LocalIntenceVectors = localIntenceVectors;
+            VectorLabeleDictionary= new Dictionary<int, List<LocalIntenceVector>>();
         }
 
 
@@ -40,7 +41,7 @@ namespace DicomImageViewer.VQ
                 C = null;
                 LocalIntenceVectors.ForEach(x => Classifier(x, klValue));
 
-                if (C.Count != K) break;
+                if (C.Count == K) break;
             }
 
         }
@@ -75,9 +76,11 @@ namespace DicomImageViewer.VQ
                 }
                 else
                 {
-                    C.Add(winnerRepresentativeVector);
-                    var lable = C.IndexOf(winnerRepresentativeVector);
+                    var newRepresentativeVector= new RepresentativeVector(localIntenceVector);
+                    C.Add(newRepresentativeVector);
+                    var lable = C.IndexOf(newRepresentativeVector);
                     localIntenceVector.Lable = lable;
+                    VectorLabeleDictionary[lable] = new List<LocalIntenceVector>();
                     VectorLabeleDictionary[lable].Add(localIntenceVector);
                 }
             }
