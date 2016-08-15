@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using DicomImageViewer.Base;
 using DicomImageViewer.VQ;
 
@@ -10,6 +11,9 @@ namespace DicomImageViewer
 {
     public class PulmonaryNodulesDetection
     {
+        public static readonly short Threshold = -500;
+        public static readonly short ReplaceValue = short.MinValue;
+
         enum EnMaskType
         {
             ONE=1,TWO=2,THREE=3,
@@ -126,11 +130,43 @@ namespace DicomImageViewer
 
         public Boolean[, ,] LocalIntenceMask { get; set; }
 
+        public short[,,] SegmentPulmonary(short[,,] imageBinery,bool isApplyClosing)
+        {
+            //Simple thresholding
+
+            imageBinery = RemoveAirByThreshold(imageBinery, Threshold, ReplaceValue);
+
+            //High-Level VQ
+            List<LocalIntenceVector> intenceVectores = MakeIntenceVectores(imageBinery);
+            IPcaAlgorithm pcaAlgoritm = new AccordPcaAlgorithm(intenceVectores);
+            var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
+            var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, localIntenceVectores);
+            highLevelVqAlgoritm.DoAlgoritm();
+
+            // Connect Component Analysis
+            var maskSize = new structs.Point3D()
+            {
+                X = imageBinery.GetLength(0),
+                Y = imageBinery.GetLength(1),
+                Z = imageBinery.GetLength(2)
+            };
+            var lungMask = MakMaskFromLocalIntenceVectore(highLevelVqAlgoritm.VectorLabeleDictionary[1], maskSize);
+            
+            //Morphological Closing
+            if (isApplyClosing)
+            {
+                var structElement3D = MakeClosingMask();
+                lungMask = new Morphology().closing3D(lungMask, structElement3D);
+            }
+
+            return CommonUtils.ApplyFilterFunction(imageBinery, lungMask, (x, m) => m == 1 ? x : ReplaceValue);
+        }
+
         public void FindInc(short[, ,] imageBinery)
         {
             //Simple thresholding
-            short threshold = -500;
-            imageBinery = RemoveAirByThreshold(imageBinery, threshold);
+           
+            imageBinery = RemoveAirByThreshold(imageBinery, Threshold,ReplaceValue);
 
             //High-Level VQ
             List<LocalIntenceVector> intenceVectores = MakeIntenceVectores(imageBinery);
@@ -159,6 +195,9 @@ namespace DicomImageViewer
             lowLevelVqAlgoritm.DoAlgoritm();
 
             var incVector = lowLevelVqAlgoritm.VectorLabeleDictionary[3];
+
+            MessageBox.Show("incVector find :" + incVector.Count.ToString());
+
 
         }
 
@@ -191,9 +230,9 @@ namespace DicomImageViewer
             return result;
         }
 
-        public static short[, ,] RemoveAirByThreshold(short[, ,] imageBinery, short threshold)
+        public static short[, ,] RemoveAirByThreshold(short[, ,] imageBinery, short threshold,short replaceValue)
         {
-            return CommonUtils.ApplyFilterFunction(imageBinery, x => (short)(x < threshold ? 1 : x));
+            return CommonUtils.ApplyFilterFunction(imageBinery, x => (short)(x < threshold ? replaceValue : x));
         }
 
 
@@ -202,12 +241,13 @@ namespace DicomImageViewer
             var resualt = new List<LocalIntenceVector>();
 
 
-            for (int x = 0; x < imageBinnery.GetLength(0); x++)
+            for (int x = 0; x <  imageBinnery.GetLength(0); x++)
             {
                 for (int y = 0; y < imageBinnery.GetLength(1); y++)
                 {
                     for (int z = 0; z < imageBinnery.GetLength(2); z++)
                     {
+                         
                         var point3D = new structs.Point3D() { X = x, Y = y, Z = z };
                         LocalIntenceVector vector = GetLocalIntenceVectorFromImageBinnery(imageBinnery, point3D, LocalIntenceMask);
                         if(vector!= null)
@@ -234,7 +274,8 @@ namespace DicomImageViewer
 
 
 
-            if (CheckBoundry(imageBinnery, localPoint3D, localIntenceMask, radialPoint))
+            if (CheckBoundry(imageBinnery, localPoint3D, localIntenceMask, radialPoint) && 
+                CheckThresoldValue(imageBinnery,localPoint3D))
             {
 
                 localIntenceVector = new LocalIntenceVector()
@@ -266,6 +307,11 @@ namespace DicomImageViewer
             }
 
             return localIntenceVector;
+        }
+
+        private bool CheckThresoldValue(short[,,] imageBinnery, structs.Point3D localPoint3D)
+        {
+            return imageBinnery[localPoint3D.X, localPoint3D.Y, localPoint3D.Z]!= ReplaceValue;
         }
 
         private static bool CheckBoundry(short[, ,] imageBinnery, structs.Point3D localPoint3D, bool[, ,] localIntenceMask, structs.Point3D radialPoint)

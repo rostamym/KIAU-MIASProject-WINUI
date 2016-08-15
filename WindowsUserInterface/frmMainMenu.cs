@@ -1427,14 +1427,15 @@ namespace MedicalCore
      {
          if (imageProcessingType == 2)
          {
-             outputSlices3D16=PulmonaryNodulesDetection.RemoveAirByThreshold(inputSlices3D16, -500);
+             outputSlices3D16=PulmonaryNodulesDetection.RemoveAirByThreshold(inputSlices3D16,PulmonaryNodulesDetection.Threshold,PulmonaryNodulesDetection.ReplaceValue);
              showInPicturebox2(sliceNumber);
          }
      }
 
      private void segmentPulmonaryToolStripMenuItem_Click(object sender, EventArgs e)
      {
-
+            outputSlices3D16=   new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, true);
+            showInPicturebox2(sliceNumber);
      }
 
      private void frmMainMenu_Load(object sender, EventArgs e)
