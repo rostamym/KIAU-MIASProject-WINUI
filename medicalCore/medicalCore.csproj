@@ -78,6 +78,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -100,13 +101,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accord.Math">
-      <HintPath>..\..\pca\pca\accord-pca-demo (1)\PCA\Accord.Math.dll</HintPath>
+      <HintPath>..\library\Accord.Math.dll</HintPath>
     </Reference>
-    <Reference Include="Accord.Statistics">
-      <HintPath>..\..\pca\pca\accord-pca-demo (1)\PCA\Accord.Statistics.dll</HintPath>
-    </Reference>
-    <Reference Include="Accord.Statistics.Controls">
-      <HintPath>..\..\pca\pca\accord-pca-demo (1)\PCA\Accord.Statistics.Controls.dll</HintPath>
+    <Reference Include="Accord.Statistics, Version=1.0.3671.34257, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\library\Accord.Statistics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -124,9 +123,11 @@
     <Compile Include="BitmapOperations.cs" />
     <Compile Include="Dialog.cs" />
     <Compile Include="Filtering.cs" />
+    <Compile Include="KMeansAlgoritm.cs" />
     <Compile Include="Morphology.cs" />
     <Compile Include="PCA\invalidMatrixSizeForOperation.cs" />
     <Compile Include="PCA\matrixMath.cs" />
+    <Compile Include="PulmonaryNodulesDetectionWithKMeans.cs" />
     <Compile Include="VQ\AccordPcaAlgorithm.cs" />
     <Compile Include="VQ\MyPcaAlgoritm.cs" />
     <Compile Include="PCA\pcaBase.cs" />

@@ -9,7 +9,7 @@ namespace DicomImageViewer.VQ
     public class LocalIntenceVector
     {
         public List<short> LocalIntenceList { get; set; }
-
+        public List<double> LocalIntenceListDoubles { get; set; }
         public structs.Point3D mainPoint { get; set; }
 
         public int Lable { get; set; }
