@@ -36,13 +36,15 @@ namespace DicomImageViewer.VQ
         public void DoAlgoritm()
         {
 
-            foreach (var klValue in VarianceList)
-            {
-                C = null;
-                LocalIntenceVectors.ForEach(x => Classifier(x, klValue));
-
-                if (C.Count == K) break;
-            }
+//            LocalIntenceVectors.ForEach(x => Classifier(x, VarianceList[0]));
+            
+                        foreach (var klValue in VarianceList)
+                        {
+                            C = null;
+                            LocalIntenceVectors.ForEach(x => Classifier(x, klValue));
+            
+                            if (C.Count == K) break;
+                        }
 
         }
 
@@ -61,7 +63,7 @@ namespace DicomImageViewer.VQ
             }
             else
             {
-                Dictionary<RepresentativeVector, int> euclideanDistanceValues = C.ToDictionary(x => x, y => EuclideanDistance(localIntenceVector, y));
+                Dictionary<RepresentativeVector, Int64> euclideanDistanceValues = C.ToDictionary(x => x, y => EuclideanDistance(localIntenceVector, y));
                 var winnerRepresentativeVectorValue = euclideanDistanceValues.Min(x => x.Value);
 
 
@@ -101,16 +103,15 @@ namespace DicomImageViewer.VQ
             winnerRepresentativeVector.LernningNumber++;
         }
 
-        private int EuclideanDistance(LocalIntenceVector localIntenceVector, RepresentativeVector representativeVector)
+        private Int64 EuclideanDistance(LocalIntenceVector localIntenceVector, RepresentativeVector representativeVector)
         {
-            var result = 0;
+            Int64 result = 0;
 
-            var efectiveDimention = localIntenceVector.LocalIntenceList.Count;
-            for (var i = 0; i < efectiveDimention; i++)
+            for (var i = 0; i < localIntenceVector.LocalIntenceList.Count; i++)
             {
                 var diff = localIntenceVector.LocalIntenceList[i] - representativeVector.LocalIntenceList[i];
                 var euclideanDis = Math.Pow(diff, 2);
-                result += Convert.ToInt32(euclideanDis);
+                result += Convert.ToInt64(euclideanDis);
             }
             return result;
         }
