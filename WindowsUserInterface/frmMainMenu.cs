@@ -24,11 +24,11 @@ namespace MedicalCore
         Thread wait;
         Thread doing2;
 
-        DicomImageViewer.dicomReader objDicomReader;
-        DicomImageViewer.convertToBitmap objConvertToBitmap;
-        DicomImageViewer.Thresholding objThresholding;
+        dicomReader objDicomReader;
+        convertToBitmap objConvertToBitmap;
+        Thresholding objThresholding;
         
-        DicomImageViewer.Annotate objAnnotation;
+        Annotate objAnnotation;
 
 
         short[, ,] inputSlices3D16;
@@ -810,7 +810,7 @@ namespace MedicalCore
       private void computeThresholdToolStripMenuItem_Click(object sender, EventArgs e)
       {
           int average = 0, finalThreshold = 0;
-          objThresholding = new DicomImageViewer.Thresholding();
+          objThresholding = new Thresholding();
           if (imageProcessingType == 2)
           {
               var prompLst = new List<string> { "Enter threshold differece Limit : " };
@@ -1434,14 +1434,16 @@ namespace MedicalCore
 
      private void segmentPulmonaryToolStripMenuItem_Click(object sender, EventArgs e)
      {
-            outputSlices3D16=   new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, true);
-            showInPicturebox2(sliceNumber);
+         var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, true);
+         outputSlices3D16 = segmentPulmonary[0];
+         showInPicturebox2(sliceNumber);
+
      }
 
      private void frmMainMenu_Load(object sender, EventArgs e)
      {
-//         this.openDICOM3DToolStripMenuItem_Click(sender, e);
-//         this.iNCDetectionToolStripMenuItem_Click(sender,e);
+         this.openDICOM3DToolStripMenuItem_Click(sender, e);
+         this.segmentPulmonaryToolStripMenuItem_Click(sender,e);
      }
 
     
@@ -1452,4 +1454,6 @@ namespace MedicalCore
    
   
  }
+
+  
 }

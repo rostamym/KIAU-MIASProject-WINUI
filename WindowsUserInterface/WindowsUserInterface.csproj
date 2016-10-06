@@ -204,13 +204,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\wait.gif" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\medicalCore\medicalCore.csproj">
       <Project>{1440f5c9-bc0e-4966-9a76-2fd2f877d5ce}</Project>
       <Name>medicalCore</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wait.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

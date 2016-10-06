@@ -74,11 +74,11 @@ namespace DicomImageViewer.pca
             if (matrix.GetLength(0) != matrix.GetLength(1))
                 throw new invalidMatrixSizeForOperation();
 
-            MLApp.MLApp matlab = new MLApp.MLApp();//Initialize matlab object which connect the matlab program
+            //MLApp.MLApp matlab = new MLApp.MLApp();//Initialize matlab object which connect the matlab program
 
             object result = null;//result which get the raw data from matlab program
 
-            matlab.Feval("eig", 1,out result, matrix);//executing the eig method from matlab which take a matrix and return 1 result
+//            matlab.Feval("eig", 1,out result, matrix);//executing the eig method from matlab which take a matrix and return 1 result
 
             object[] res = result as object[];
 
@@ -92,11 +92,11 @@ namespace DicomImageViewer.pca
             if (matrix.GetLength(0) != matrix.GetLength(1))
                 throw new invalidMatrixSizeForOperation();
 
-            MLApp.MLApp matlab = new MLApp.MLApp();//Initialize matlab object which connect the matlab program
+            //MLApp.MLApp matlab = new MLApp.MLApp();//Initialize matlab object which connect the matlab program
 
             object result = null;//result which get the raw data from matlab program
 
-            matlab.Feval("eig", 2, out result, matrix);//executing the eig method from matlab which take a matrix and return 1 result
+            //matlab.Feval("eig", 2, out result, matrix);//executing the eig method from matlab which take a matrix and return 1 result
 
             object[] res = result as object[];
 

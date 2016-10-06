@@ -139,9 +139,12 @@ namespace DicomImageViewer
             //High-Level VQ
             List<LocalIntenceVector> intenceVectores = MakeIntenceVectores(imageBinery);
             IPcaAlgorithm pcaAlgoritm = new AccordPcaAlgorithm(intenceVectores);
-            var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
+           // var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
             //            var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, localIntenceVectores);
-            var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, intenceVectores);
+
+
+            var varianceList = makeVarianceList(intenceVectores);
+            var highLevelVqAlgoritm = new VQAlgoritm(varianceList, 2, intenceVectores);
             highLevelVqAlgoritm.DoAlgoritm();
 
             // Connect Component Analysis
@@ -174,6 +177,31 @@ namespace DicomImageViewer
             resualt.Add(CommonUtils.ApplyFilterFunction(imageBinery, lungMask2, (x, m) => m == 1 ? x : ReplaceValue));
             return resualt;
 
+        }
+
+        private List<int> makeVarianceList(List<LocalIntenceVector> intenceVectores)
+        {
+            var varianceList = new List<int>();
+
+            int minVal = Int32.MaxValue;
+            int maxVal = Int32.MinValue;
+
+            intenceVectores.ForEach(x =>
+            {
+                var localMin = x.LocalIntenceList.Min();
+                var localMax = x.LocalIntenceList.Max();
+                if (minVal > localMin) minVal = localMin;
+                if (maxVal < localMax) maxVal = localMax;
+            });
+
+            var varianceVal = maxVal - minVal;
+
+            for (int i = varianceVal; i > 10 ; i-=10)
+            {
+                varianceList.Add(i);
+            }
+
+            return varianceList;
         }
 
         public void FindInc(short[, ,] imageBinery)
