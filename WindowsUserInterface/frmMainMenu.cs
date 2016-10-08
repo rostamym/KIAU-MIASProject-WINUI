@@ -1434,13 +1434,16 @@ namespace MedicalCore
 
      private void segmentPulmonaryToolStripMenuItem_Click(object sender, EventArgs e)
      {
-         var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, true);
-         outputSlices3D16 = segmentPulmonary[0];
-         showInPicturebox2(sliceNumber);
+//         var segmentPulmonary = new PulmonaryNodulesDetectionWithKMeans().SegmentPulmonary(inputSlices3D16, false);
+//         outputSlices3D16 = segmentPulmonary;
+//         showInPicturebox2(sliceNumber);
 
-     }
+            var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, false);
+            outputSlices3D16 = segmentPulmonary[0];
+            showInPicturebox2(sliceNumber);
+        }
 
-     private void frmMainMenu_Load(object sender, EventArgs e)
+        private void frmMainMenu_Load(object sender, EventArgs e)
      {
          this.openDICOM3DToolStripMenuItem_Click(sender, e);
          this.segmentPulmonaryToolStripMenuItem_Click(sender,e);

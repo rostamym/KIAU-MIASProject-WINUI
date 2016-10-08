@@ -138,7 +138,7 @@ namespace DicomImageViewer
 
             //High-Level VQ
             List<LocalIntenceVector> intenceVectores = MakeIntenceVectores(imageBinery);
-            IPcaAlgorithm pcaAlgoritm = new AccordPcaAlgorithm(intenceVectores);
+      //      IPcaAlgorithm pcaAlgoritm = new AccordPcaAlgorithm(intenceVectores);
            // var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
             //            var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, localIntenceVectores);
 

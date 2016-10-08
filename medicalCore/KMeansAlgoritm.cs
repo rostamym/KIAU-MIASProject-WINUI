@@ -9,7 +9,7 @@ namespace DicomImageViewer.VQ
     public class KMeansAlgoritm
     {
         #region Filed
-        public List<int> VarianceList { get; private set; }
+//        public List<int> VarianceList { get; private set; }
 
         public int K { get; private set; }
         
@@ -29,7 +29,7 @@ namespace DicomImageViewer.VQ
         #region methods declaration
         public KMeansAlgoritm(List<int> varianceList, int k, List<LocalIntenceVector> localIntenceVectors)
         {
-            VarianceList = varianceList;
+//            VarianceList = varianceList;
             K = k;
             LocalIntenceVectors = localIntenceVectors;
 

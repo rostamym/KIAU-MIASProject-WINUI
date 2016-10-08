@@ -134,13 +134,13 @@ namespace DicomImageViewer
         {
             //Simple thresholding
 
-            imageBinery = RemoveAirByThreshold(imageBinery, Threshold, ReplaceValue);
+//            imageBinery = RemoveAirByThreshold(imageBinery, Threshold, ReplaceValue);
 
             //High-Level VQ
             List<LocalIntenceVector> intenceVectores = MakeIntenceVectores(imageBinery);
-            IPcaAlgorithm pcaAlgoritm = new AccordPcaAlgorithm(intenceVectores);
-            var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
-            var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, intenceVectores);
+//            IPcaAlgorithm pcaAlgoritm = new AccordPcaAlgorithm(intenceVectores);
+//            var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
+            var highLevelVqAlgoritm = new KMeansAlgoritm(null, 2, intenceVectores);
             highLevelVqAlgoritm.DoAlgoritm();
              
             // Connect Component Analysis
@@ -262,7 +262,7 @@ namespace DicomImageViewer
             var resualt = new List<LocalIntenceVector>();
 
 
-            for (int x = 63; x < 67; x++)
+            for (int x = 25; x < 30; x++)
             {
                 for (int y = 0; y < imageBinnery.GetLength(1); y++)
                 {
