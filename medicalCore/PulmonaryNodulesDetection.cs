@@ -285,7 +285,7 @@ namespace DicomImageViewer
 
 
 //            for (int x = 0; x <  imageBinnery.GetLength(0); x++)
-            for (int x = 28; x <  33; x++)
+            for (int x = 25; x <  35; x++)
             {
                 for (int y = 0; y < imageBinnery.GetLength(1); y++)
                 {
@@ -372,6 +372,22 @@ namespace DicomImageViewer
                    localPoint3D.X - radialPoint.X + localIntenceMask.GetLength(0) < imageBinnery.GetLength(0) &&
                    localPoint3D.Y - radialPoint.Y + localIntenceMask.GetLength(1) < imageBinnery.GetLength(1) &&
                    localPoint3D.Z - radialPoint.Z + localIntenceMask.GetLength(2) < imageBinnery.GetLength(2);
+        }
+
+        public short[,,] CreateParams3DGeometricImage(structs.Point3D sizeImage, short backGround, short foreground, Func<int ,int ,int ,bool > drawFunc  )
+        {
+            var result = new short[sizeImage.X, sizeImage.Y, sizeImage.Z];
+
+            for (int x = 0; x < sizeImage.X; x++)
+                for (int y = 0; y < sizeImage.Y; y++)
+                    for (int z = 0; z < sizeImage.Z; z++)
+                        if (drawFunc(x, y, z))
+                            result[x, y, z] = foreground;
+                        else
+                            result[x, y, z] = backGround;
+
+            return result;
+
         }
     }
 }

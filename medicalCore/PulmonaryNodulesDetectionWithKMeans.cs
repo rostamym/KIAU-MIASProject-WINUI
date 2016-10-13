@@ -262,7 +262,7 @@ namespace DicomImageViewer
             var resualt = new List<LocalIntenceVector>();
 
 
-            for (int x = 25; x < 30; x++)
+            for (int x = 0; x < imageBinnery.GetLength(0); x++)
             {
                 for (int y = 0; y < imageBinnery.GetLength(1); y++)
                 {
