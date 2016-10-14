@@ -1544,30 +1544,34 @@ namespace MedicalCore
 
         private void segmentPulmonaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var segmentPulmonary = new PulmonaryNodulesDetectionWithKMeans().SegmentPulmonary(inputSlices3D16, false);
-            outputSlices3D16 = segmentPulmonary;
-            showInPicturebox2(sliceNumber);
-
-//            var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, false);
-//            outputSlices3D16 = segmentPulmonary[0];
+//            var segmentPulmonary = new PulmonaryNodulesDetectionWithKMeans().SegmentPulmonary(inputSlices3D16, false);
+//            outputSlices3D16 = segmentPulmonary;
 //            showInPicturebox2(sliceNumber);
+
+            var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, false);
+            outputSlices3D16 = segmentPulmonary[0];
+            showInPicturebox2(sliceNumber);
         }
 
         private void frmMainMenu_Load(object sender, EventArgs e)
         {
-//         this.openDICOM3DToolStripMenuItem_Click(sender, e);
-            loadSample();
-            //this.segmentPulmonaryToolStripMenuItem_Click(sender,e);
+            //         this.openDICOM3DToolStripMenuItem_Click(sender, e);
+            loadSampleGeometryShape(
+                (x, y, z) => 
+                                (x > 2 && x < 8 && y > 150 && y < 350 && z > 50 && z < 450)
+                );
+            this.segmentPulmonaryToolStripMenuItem_Click(sender,e);
         }
 
-        private void loadSample()
+
+        private void loadSampleGeometryShape(Func<int, int, int, bool> geoFunc)
         {
-            var imageSize = new structs.Point3D() {X = 10, Y = 512, Z = 512};
+            loadSampleGeometryShape(new structs.Point3D() {X = 10, Y = 512, Z = 512}, 200, 3000, geoFunc);
 
+        }
 
-
-
-
+        private void loadSampleGeometryShape(structs.Point3D imageSize , short bachGround, short foreGround, Func<int,int,int,bool> geoFunc )
+        {
             //##########################################
 
             existInputSlice = true;
@@ -1577,7 +1581,8 @@ namespace MedicalCore
             imageType = 1;
             minValue3D = int.MaxValue;
             maxValue3D = int.MinValue;
-
+            numberOfBitsAllocated = 16;
+            numberOfSamplesPerPixel = 1;
 
             //--------------
 
@@ -1591,7 +1596,7 @@ namespace MedicalCore
             objAnnotation = new Annotate(numberOfSlices);
 
             inputSlices3D16 = new PulmonaryNodulesDetection().CreateParams3DGeometricImage( imageSize,  short.MinValue , 0,
-                (x, y, z) =>(x > 2 && x < 8 && y > 50 && y < 450 && z > 50 && z < 450)  );
+                geoFunc );
            
 
             inputSlices2D16 = new short[imageSize.Y, imageSize.Z];

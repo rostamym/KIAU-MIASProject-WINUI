@@ -213,10 +213,10 @@ namespace DicomImageViewer
             if (maxPixelValue == minPixelValue)
                 maxPixelValue = minPixelValue + 1;
 
-            if (winMin < minPixelValue)
+            if (winMin > minPixelValue)
                 winMin = minPixelValue;
 
-            if (winMax > maxPixelValue)
+            if (winMax < maxPixelValue)
                 winMax = maxPixelValue;
 
             sizeImg = argPixels16.GetLength(0) * argPixels16.GetLength(1);
@@ -441,10 +441,10 @@ namespace DicomImageViewer
                 if (maxPixelValue == minPixelValue)
                     maxPixelValue = minPixelValue + 1;
 
-                if (winMin < minPixelValue)
+                if (winMin > minPixelValue)
                     winMin = minPixelValue;
 
-                if (winMax > maxPixelValue)
+                if (winMax < maxPixelValue)
                     winMax = maxPixelValue;
 
             sizeImg = argPixels16.GetLength(1) * argPixels16.GetLength(2);
