@@ -301,7 +301,7 @@ namespace DicomImageViewer
 
                 localIntenceVector = new LocalIntenceVector()
                 {
-                    mainPoint = localPoint3D,
+                    mainPoint = localPoint3D,MainValue = imageBinnery[localPoint3D.X, localPoint3D.Y, localPoint3D.Z],
                     LocalIntenceListDoubles = new List<double>()
                 };
 

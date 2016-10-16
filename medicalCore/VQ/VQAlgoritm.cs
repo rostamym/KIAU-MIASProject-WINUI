@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DicomImageViewer.VQ
 {
@@ -68,6 +69,11 @@ namespace DicomImageViewer.VQ
 
 
                 RepresentativeVector winnerRepresentativeVector = euclideanDistanceValues.FirstOrDefault(x => x.Value == winnerRepresentativeVectorValue).Key;
+
+                if (!localIntenceVector.ValidValue ||
+//                    !winnerRepresentativeVector.ValidValue ||
+                    localIntenceVector.MainValue != winnerRepresentativeVector.MainValue)
+                    MessageBox.Show("aaaaa");
 
                 if (winnerRepresentativeVectorValue < klValue || C.Count == K)
                 {

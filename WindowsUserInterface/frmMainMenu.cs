@@ -1558,7 +1558,7 @@ namespace MedicalCore
             //         this.openDICOM3DToolStripMenuItem_Click(sender, e);
             loadSampleGeometryShape(
                 (x, y, z) => 
-                                (x > 2 && x < 8 && y > 150 && y < 350 && z > 50 && z < 450)
+                                (x > 1 && x < 5 && y > 10 && y < 90 && z > 20 && z < 180)
                 );
             this.segmentPulmonaryToolStripMenuItem_Click(sender,e);
         }
@@ -1566,7 +1566,7 @@ namespace MedicalCore
 
         private void loadSampleGeometryShape(Func<int, int, int, bool> geoFunc)
         {
-            loadSampleGeometryShape(new structs.Point3D() {X = 10, Y = 512, Z = 512}, 200, 3000, geoFunc);
+            loadSampleGeometryShape(new structs.Point3D() {X = 10, Y = 512, Z = 512}, 0, 2000, geoFunc);
 
         }
 
@@ -1595,8 +1595,7 @@ namespace MedicalCore
 
             objAnnotation = new Annotate(numberOfSlices);
 
-            inputSlices3D16 = new PulmonaryNodulesDetection().CreateParams3DGeometricImage( imageSize,  short.MinValue , 0,
-                geoFunc );
+            inputSlices3D16 = new PulmonaryNodulesDetection().CreateParams3DGeometricImage( imageSize,  bachGround,foreGround,geoFunc );
            
 
             inputSlices2D16 = new short[imageSize.Y, imageSize.Z];

@@ -12,7 +12,16 @@ namespace DicomImageViewer.VQ
         public RepresentativeVector(LocalIntenceVector localIntenceVector)
         {
             this.LocalIntenceList = new List<short>(localIntenceVector.LocalIntenceList);
+            this.MainValue = localIntenceVector.MainValue;
+
             LernningNumber = 1;
+        }
+
+        public short MainValue { get;  set; }
+
+        public bool ValidValue
+        {
+            get { return MainValue == LocalIntenceList[LocalIntenceList.Count / 2]; }
         }
         public List<short> LocalIntenceList { get; set; }
 

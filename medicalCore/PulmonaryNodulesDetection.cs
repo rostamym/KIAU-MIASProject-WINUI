@@ -349,6 +349,14 @@ namespace DicomImageViewer
                                 short intence = imageBinnery[indexX, indexY, indexZ];
 
                                 localIntenceVector.LocalIntenceList.Add(intence);
+
+                                if (localPoint3D.X + "," + localPoint3D.Y + "," + localPoint3D.Z ==
+                                    indexX + "," + indexY + "," + indexZ &&
+                                    localIntenceVector.LocalIntenceList.Count != 4)
+                                {
+                                    MessageBox.Show("eeee");
+
+                                }
                             }
                         }
                     }
@@ -385,6 +393,17 @@ namespace DicomImageViewer
                             result[x, y, z] = foreground;
                         else
                             result[x, y, z] = backGround;
+
+            //add noise
+            bool addNoise = false;
+
+            if(addNoise)
+            for (int x = 0; x < sizeImage.X; x++)
+            {
+                result[x, 0, 0] = short.MinValue;
+                result[x, 0, 1] = short.MaxValue;
+            }
+
 
             return result;
 

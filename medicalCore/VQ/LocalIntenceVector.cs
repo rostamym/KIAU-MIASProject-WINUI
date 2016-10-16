@@ -12,6 +12,11 @@ namespace DicomImageViewer.VQ
         public List<double> LocalIntenceListDoubles { get; set; }
         public structs.Point3D mainPoint { get; set; }
 
+        public bool ValidValue {
+            get { return MainValue == LocalIntenceList[LocalIntenceList.Count/2]; }
+        }
+        public short MainValue { get; set; }
+
         public int Lable { get; set; }
     }
 }
