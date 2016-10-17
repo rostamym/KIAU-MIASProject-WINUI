@@ -30,8 +30,6 @@ namespace DicomImageViewer.VQ
         //        public int Lable { get; set; }
 
         public int LernningNumber { get; set; }
-
-
-
+        public int Lable { get; set; }
     }
 }

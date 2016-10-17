@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using DicomImageViewer.Base;
 using DicomImageViewer.VQ;
 
@@ -142,6 +143,15 @@ namespace DicomImageViewer
            // var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
             //            var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, localIntenceVectores);
 
+            if (!intenceVectores.TrueForAll(x => x.ValidValue))
+            {
+                var vectors1 = intenceVectores.Where(x => !x.ValidValue).ToList();
+                var vectors2 = intenceVectores.Where(x => x.MainValue!=0).ToList();
+
+                MessageBox.Show("eee");
+
+            }
+            
 
             var varianceList = makeVarianceList(intenceVectores);
             var highLevelVqAlgoritm = new VQAlgoritm(varianceList, 2, intenceVectores);
@@ -327,12 +337,16 @@ namespace DicomImageViewer
             if (CheckBoundry(imageBinnery, localPoint3D, localIntenceMask, radialPoint) && 
                 CheckThresoldValue(imageBinnery,localPoint3D))
             {
-
-                localIntenceVector = new LocalIntenceVector()
+                try
                 {
-                    mainPoint = localPoint3D,
-                    LocalIntenceList = new List<short>()
-                };
+                    localIntenceVector = new LocalIntenceVector()
+                    {
+                        mainPoint = localPoint3D,
+                        MainValue = imageBinnery[localPoint3D.X, localPoint3D.Y, localPoint3D.Z],
+                        LocalIntenceList = new List<short>()
+                    };
+                
+                
 
                 for (int x = 0; x < localIntenceMask.GetLength(0); x++)
                 {
@@ -360,6 +374,13 @@ namespace DicomImageViewer
                             }
                         }
                     }
+                }
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
                 }
 
             }

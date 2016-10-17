@@ -57,6 +57,8 @@ namespace DicomImageViewer.VQ
                 var representativeVector = new RepresentativeVector(localIntenceVector);
                 C.Add(representativeVector);
                 int lable = C.IndexOf(representativeVector);
+                representativeVector.Lable = lable;
+
                 localIntenceVector.Lable = lable;
                 var localIntenceVectorsInAClass = new List<LocalIntenceVector>();
                 localIntenceVectorsInAClass.Add(localIntenceVector);
@@ -70,15 +72,22 @@ namespace DicomImageViewer.VQ
 
                 RepresentativeVector winnerRepresentativeVector = euclideanDistanceValues.FirstOrDefault(x => x.Value == winnerRepresentativeVectorValue).Key;
 
-                if (!localIntenceVector.ValidValue ||
-//                    !winnerRepresentativeVector.ValidValue ||
-                    localIntenceVector.MainValue != winnerRepresentativeVector.MainValue)
-                    MessageBox.Show("aaaaa");
+               
 
-                if (winnerRepresentativeVectorValue < klValue || C.Count == K)
+                if (winnerRepresentativeVectorValue < Math.Pow(klValue ,2) * 7 || C.Count == K)
                 {
+
+                    if (!localIntenceVector.ValidValue ||
+                        //                    !winnerRepresentativeVector.ValidValue ||
+                        localIntenceVector.MainValue != winnerRepresentativeVector.MainValue)
+                        MessageBox.Show("aaaaa");
+                        ;
+
+
                     var lable = C.IndexOf(winnerRepresentativeVector);
                     localIntenceVector.Lable = lable;
+                    winnerRepresentativeVector.Lable = lable;
+
                     VectorLabeleDictionary[lable].Add(localIntenceVector);
                     UpdateRepresentativeVector(winnerRepresentativeVector, localIntenceVector);
                 }
@@ -88,6 +97,7 @@ namespace DicomImageViewer.VQ
                     C.Add(newRepresentativeVector);
                     var lable = C.IndexOf(newRepresentativeVector);
                     localIntenceVector.Lable = lable;
+                    newRepresentativeVector.Lable = lable;
                     VectorLabeleDictionary[lable] = new List<LocalIntenceVector>();
                     VectorLabeleDictionary[lable].Add(localIntenceVector);
                 }
