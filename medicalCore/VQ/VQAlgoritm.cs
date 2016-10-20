@@ -74,13 +74,13 @@ namespace DicomImageViewer.VQ
 
                
 
-                if (winnerRepresentativeVectorValue < Math.Pow(klValue ,2) * 7 || C.Count == K)
+                if (winnerRepresentativeVectorValue < Math.Pow(klValue ,2) * 5 || C.Count == K)
                 {
 
                     if (!localIntenceVector.ValidValue ||
                         //                    !winnerRepresentativeVector.ValidValue ||
                         localIntenceVector.MainValue != winnerRepresentativeVector.MainValue)
-                        MessageBox.Show("aaaaa");
+                        //MessageBox.Show("aaaaa");
                         ;
 
 
@@ -106,7 +106,9 @@ namespace DicomImageViewer.VQ
 
         private void UpdateRepresentativeVector(RepresentativeVector winnerRepresentativeVector, LocalIntenceVector localIntenceVector)
         {
-            int lernningNumber = winnerRepresentativeVector.LernningNumber;
+            return;
+            //nothing 
+             int lernningNumber = winnerRepresentativeVector.LernningNumber;
 
             for (int i = 0; i < winnerRepresentativeVector.LocalIntenceList.Count; i++)
             {
