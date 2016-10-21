@@ -135,22 +135,22 @@ namespace DicomImageViewer
         {
             //Simple thresholding
 
-//            imageBinery = RemoveAirByThreshold(imageBinery, Threshold, ReplaceValue);
+            imageBinery = RemoveAirByThreshold(imageBinery, Threshold, ReplaceValue);
 
             //High-Level VQ
             List<LocalIntenceVector> intenceVectores = MakeIntenceVectores(imageBinery);
-      //      IPcaAlgorithm pcaAlgoritm = new AccordPcaAlgorithm(intenceVectores);
-           // var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
-            //            var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, localIntenceVectores);
+//            IPcaAlgorithm pcaAlgoritm = new AccordPcaAlgorithm(intenceVectores);
+//            var localIntenceVectores = pcaAlgoritm.DoAlgorithm(95);
+//                        var highLevelVqAlgoritm = new VQAlgoritm(pcaAlgoritm.VarianceKL, 2, localIntenceVectores);
 
-            if (!intenceVectores.TrueForAll(x => x.ValidValue))
-            {
-                var vectors1 = intenceVectores.Where(x => !x.ValidValue).ToList();
-                var vectors2 = intenceVectores.Where(x => x.MainValue!=0).ToList();
+//            if (!intenceVectores.TrueForAll(x => x.ValidValue))
+//            {
+//                var vectors1 = intenceVectores.Where(x => !x.ValidValue).ToList();
+//                var vectors2 = intenceVectores.Where(x => x.MainValue!=0).ToList();
 
-                MessageBox.Show("eee");
+//                MessageBox.Show("eee");
 
-            }
+//            }
             
 
             var varianceList = makeVarianceList(intenceVectores);
@@ -158,6 +158,7 @@ namespace DicomImageViewer
             highLevelVqAlgoritm.DoAlgoritm();
 
             // Connect Component Analysis
+
             var maskSize = new structs.Point3D()
             {
                 X = imageBinery.GetLength(0),
@@ -208,7 +209,8 @@ namespace DicomImageViewer
 
             for (int i = varianceVal; i > 10 ; i-=10)
             {
-                varianceList.Add(i);
+                var treshold = (short)(Math.Pow(i,2));
+                varianceList.Add(treshold );
             }
 
             return varianceList;
@@ -295,7 +297,7 @@ namespace DicomImageViewer
 
 
 //            for (int x = 0; x <  imageBinnery.GetLength(0); x++)
-            for (int x = 0; x < imageBinnery.GetLength(0); x++)
+            for (int x = 20; x < 40; x++)
             {
                 for (int y = 0; y < imageBinnery.GetLength(1); y++)
                 {

@@ -80,10 +80,7 @@ namespace MedicalCore
 
         //int Filetype = 3;  // 3==PGM2D   1==DICOM2D
         public int imageProcessingType = new int();
-
-
-
-
+        
 
 
         public frmMainMenu()
@@ -1511,6 +1508,19 @@ namespace MedicalCore
 
         }
 
+        private void seg0ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            outputSlices3D16 = segments[0];
+            showInPicturebox2(sliceNumber);
+
+        }
+
+        private void seg1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            outputSlices3D16 = segments[1];
+            showInPicturebox2(sliceNumber);
+        }
+
         private void skewnessOfHistogramToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -1542,6 +1552,7 @@ namespace MedicalCore
             }
         }
 
+        private List<short[,,]> segments;
         private void segmentPulmonaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
 //            var segmentPulmonary = new PulmonaryNodulesDetectionWithKMeans().SegmentPulmonary(inputSlices3D16, false);
@@ -1549,17 +1560,17 @@ namespace MedicalCore
 //            showInPicturebox2(sliceNumber);
 
             var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, false);
-            outputSlices3D16 = segmentPulmonary[0];
-            showInPicturebox2(sliceNumber);
+
+            segments = segmentPulmonary;
         }
 
         private void frmMainMenu_Load(object sender, EventArgs e)
         {
-            //         this.openDICOM3DToolStripMenuItem_Click(sender, e);
-            loadSampleGeometryShape(
-                (x, y, z) => 
-                                (x > 1 && x < 5 && y > 10 && y < 90 && z > 20 && z < 180)
-                );
+                     this.openDICOM3DToolStripMenuItem_Click(sender, e);
+//            loadSampleGeometryShape(
+//                (x, y, z) => 
+//                                (x > 1 && x < 5 && y > 10 && y < 90 && z > 20 && z < 180)
+//                );
             this.segmentPulmonaryToolStripMenuItem_Click(sender,e);
         }
 

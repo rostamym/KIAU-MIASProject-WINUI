@@ -136,6 +136,8 @@
             this.trackBarSliceNumber = new System.Windows.Forms.TrackBar();
             this.lblTotalNumberOfSlices = new System.Windows.Forms.Label();
             this.lblStartNumberOfSlices = new System.Windows.Forms.Label();
+            this.seg0ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.seg1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarWinCenter)).BeginInit();
@@ -742,7 +744,9 @@
             this.segmentPulmonaryToolStripMenuItem,
             this.iNCDetectionToolStripMenuItem,
             this.roleBaseReduseFPToolStripMenuItem,
-            this.sVMReduseFPToolStripMenuItem});
+            this.sVMReduseFPToolStripMenuItem,
+            this.seg0ToolStripMenuItem,
+            this.seg1ToolStripMenuItem});
             this.pulameryNodulDetectionToolStripMenuItem.Name = "pulameryNodulDetectionToolStripMenuItem";
             this.pulameryNodulDetectionToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
             this.pulameryNodulDetectionToolStripMenuItem.Text = "Pulmonary Nodule Detection";
@@ -971,6 +975,20 @@
             this.lblStartNumberOfSlices.TabIndex = 40;
             this.lblStartNumberOfSlices.Text = "0";
             // 
+            // seg0ToolStripMenuItem
+            // 
+            this.seg0ToolStripMenuItem.Name = "seg0ToolStripMenuItem";
+            this.seg0ToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.seg0ToolStripMenuItem.Text = "seg0";
+            this.seg0ToolStripMenuItem.Click += new System.EventHandler(this.seg0ToolStripMenuItem_Click);
+            // 
+            // seg1ToolStripMenuItem
+            // 
+            this.seg1ToolStripMenuItem.Name = "seg1ToolStripMenuItem";
+            this.seg1ToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.seg1ToolStripMenuItem.Text = "seg1";
+            this.seg1ToolStripMenuItem.Click += new System.EventHandler(this.seg1ToolStripMenuItem_Click);
+            // 
             // frmMainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1120,6 +1138,8 @@
         private System.Windows.Forms.ToolStripMenuItem iNCDetectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem roleBaseReduseFPToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sVMReduseFPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem seg0ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem seg1ToolStripMenuItem;
     }
 }
 

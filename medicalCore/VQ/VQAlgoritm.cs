@@ -74,7 +74,7 @@ namespace DicomImageViewer.VQ
 
                
 
-                if (winnerRepresentativeVectorValue < Math.Pow(klValue ,2) * 5 || C.Count == K)
+                if (winnerRepresentativeVectorValue < klValue  || C.Count == K)
                 {
 
                     if (!localIntenceVector.ValidValue ||
@@ -106,7 +106,7 @@ namespace DicomImageViewer.VQ
 
         private void UpdateRepresentativeVector(RepresentativeVector winnerRepresentativeVector, LocalIntenceVector localIntenceVector)
         {
-            return;
+//            return;
             //nothing 
              int lernningNumber = winnerRepresentativeVector.LernningNumber;
 
@@ -114,7 +114,9 @@ namespace DicomImageViewer.VQ
             {
                 var CMI = winnerRepresentativeVector.LocalIntenceList[i];
                 var WI = localIntenceVector.LocalIntenceList[i];
-                CMI = (short)((lernningNumber * CMI + WI) / lernningNumber + 1);
+                CMI = (short)(
+                    ((lernningNumber * CMI) + WI) / (lernningNumber + 1)
+                    );
                 winnerRepresentativeVector.LocalIntenceList[i] = CMI;
             }
 
