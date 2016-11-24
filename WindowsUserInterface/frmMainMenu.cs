@@ -1521,6 +1521,18 @@ namespace MedicalCore
             showInPicturebox2(sliceNumber);
         }
 
+        private void seg2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            outputSlices3D16 = segments[2];
+            showInPicturebox2(sliceNumber);
+        }
+
+        private void seg3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            outputSlices3D16 = segments[3];
+            showInPicturebox2(sliceNumber);
+        }
+
         private void skewnessOfHistogramToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -1562,6 +1574,8 @@ namespace MedicalCore
             var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, false,true);
 
             segments = segmentPulmonary;
+//            seg0ToolStripMenuItem_Click(sender, e);
+
             MessageBox.Show("aaa");
 
         }
