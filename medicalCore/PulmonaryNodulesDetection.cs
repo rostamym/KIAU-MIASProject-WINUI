@@ -19,7 +19,7 @@ namespace DicomImageViewer
         {
             ONE=1,TWO=2,THREE=3,
         }
-        public PulmonaryNodulesDetection():this(1)
+        public PulmonaryNodulesDetection():this(3)
         {
 
         }
@@ -27,7 +27,18 @@ namespace DicomImageViewer
         public PulmonaryNodulesDetection(int type)
         {
             this.LocalIntenceMask= GetInstanceMask(type);
+            this.LocalVectorDimention = GetVectorDimation();
+
         }
+
+        private int GetVectorDimation()
+        {
+            var dimCount = 0;
+            CommonUtils.ApplyFilterFunction(LocalIntenceMask, x => { dimCount += x ? 1 : 0; return x; });
+            return dimCount;
+        }
+
+        public int LocalVectorDimention { get; set; }
 
         private bool[,,] GetInstanceMask(int type)
         {
@@ -131,16 +142,17 @@ namespace DicomImageViewer
 
         public Boolean[, ,] LocalIntenceMask { get; set; }
 
-        public List<short[,,]> SegmentPulmonary(short[,,] imageBinery,bool isApplyClosing,bool isUsedThresholdMask)
+        public List<short[,,]> SegmentPulmonary(short[,,] imageBinery,bool isApplyClosing,bool isUsedThresholdMask,bool ignoreThreshold)
         {
             //Simple thresholding
             bool[,,] thresholdMask = null;
-
-            if (isUsedThresholdMask)
-                thresholdMask= MakeMaskForRemoveAirByThreshold(imageBinery, Threshold);
-            else
-                imageBinery = RemoveAirByThreshold(imageBinery, Threshold, ReplaceValue);
-
+            if (ignoreThreshold)
+            {
+                if (isUsedThresholdMask)
+                    thresholdMask = MakeMaskForRemoveAirByThreshold(imageBinery, Threshold);
+                else
+                    imageBinery = RemoveAirByThreshold(imageBinery, Threshold, ReplaceValue);
+            }
 
 
             //High-Level VQ
@@ -160,7 +172,7 @@ namespace DicomImageViewer
             
 
             var varianceList = makeVarianceList(intenceVectores);
-            var highLevelVqAlgoritm = new VQAlgoritm(varianceList, 3, intenceVectores);
+            var highLevelVqAlgoritm = new VQAlgoritm(varianceList, 2, intenceVectores);
             highLevelVqAlgoritm.DoAlgoritm();
 
             // Connect Component Analysis
@@ -194,17 +206,19 @@ namespace DicomImageViewer
 
             resualt.Add(CommonUtils.ApplyFilterFunction(imageBinery, lungMask2, (x, m) => m == 1 ? short.MaxValue : short.MinValue));
 
+            /*
+                        var lungMask3 = MakMaskFromLocalIntenceVectore(highLevelVqAlgoritm.VectorLabeleDictionary[2], maskSize);
 
-            var lungMask3 = MakMaskFromLocalIntenceVectore(highLevelVqAlgoritm.VectorLabeleDictionary[2], maskSize);
+                        //Morphological Closing
+                        if (isApplyClosing)
+                        {
+                            var structElement3D = MakeClosingMask();
+                            lungMask3 = new Morphology().closing3D(lungMask3, structElement3D);
+                        }
 
-            //Morphological Closing
-            if (isApplyClosing)
-            {
-                var structElement3D = MakeClosingMask();
-                lungMask3 = new Morphology().closing3D(lungMask3, structElement3D);
-            }
+                        resualt.Add(CommonUtils.ApplyFilterFunction(imageBinery, lungMask3, (x, m) => m == 1 ? short.MaxValue : short.MinValue));
+                        */
 
-            resualt.Add(CommonUtils.ApplyFilterFunction(imageBinery, lungMask3, (x, m) => m == 1 ? short.MaxValue : short.MinValue));
             return resualt;
         }
 
@@ -229,10 +243,12 @@ namespace DicomImageViewer
             });
 
             var varianceVal = maxVal - minVal;
+            var dimCount = LocalVectorDimention;
+            
 
             for (int i = varianceVal; i > 10 ; i-=10)
             {
-                var treshold = (short)(Math.Pow(i,2))*7;
+                var treshold = (short)(Math.Pow(i,2))*dimCount;
                 varianceList.Add(treshold );
             }
 
@@ -320,7 +336,7 @@ namespace DicomImageViewer
 
 
 //            for (int x = 0; x <  imageBinnery.GetLength(0); x++)
-            for (int x = 20; x < 40; x++)
+            for (int x = 20; x < 25; x++)
             {
                 for (int y = 0; y < imageBinnery.GetLength(1); y++)
                 {
@@ -391,7 +407,7 @@ namespace DicomImageViewer
 
                                 if (localPoint3D.X + "," + localPoint3D.Y + "," + localPoint3D.Z ==
                                     indexX + "," + indexY + "," + indexZ &&
-                                    localIntenceVector.LocalIntenceList.Count != 4)
+                                    localIntenceVector.LocalIntenceList.Count != (LocalVectorDimention/2)+1)
                                 {
                                     MessageBox.Show("eeee");
 

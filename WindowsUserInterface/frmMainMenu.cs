@@ -1571,7 +1571,7 @@ namespace MedicalCore
 //            outputSlices3D16 = segmentPulmonary;
 //            showInPicturebox2(sliceNumber);
 
-            var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, false,true);
+            var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, false,true,true);
 
             segments = segmentPulmonary;
 //            seg0ToolStripMenuItem_Click(sender, e);
