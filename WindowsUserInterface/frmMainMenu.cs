@@ -8,8 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 using DicomImageViewer;
 using System.Threading;
+using DicomImageViewer.Base;
 using MedicalCore;
 
 
@@ -1512,6 +1514,9 @@ namespace MedicalCore
         {
             outputSlices3D16 = segments[0];
             showInPicturebox2(sliceNumber);
+            annotateSegment(outputSlices3D16);
+
+
 
         }
 
@@ -1519,18 +1524,21 @@ namespace MedicalCore
         {
             outputSlices3D16 = segments[1];
             showInPicturebox2(sliceNumber);
+            annotateSegment(outputSlices3D16);
         }
 
         private void seg2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             outputSlices3D16 = segments[2];
             showInPicturebox2(sliceNumber);
+            annotateSegment(outputSlices3D16);
         }
 
         private void seg3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             outputSlices3D16 = segments[3];
             showInPicturebox2(sliceNumber);
+            annotateSegment(outputSlices3D16);
         }
 
         private void skewnessOfHistogramToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1666,7 +1674,36 @@ namespace MedicalCore
 
             lblTotalNumberOfSlices.Text = Convert.ToString(numberOfSlices);
         }
+
+
+        public void annotateSegment(short[,,] image)
+        {
+            CommonUtils.visitImageFunction(image, (x, y) =>
+            {
+                if (x == short.MaxValue) drawRigion(y);
+            });
+        }
+
+        public void drawRigion(structs.Point3D point)
+        {
+            var sliceNo = point.Z;
+
+            numberOfROIsInSlice[sliceNo]++;
+            objAnnotation.make_new_ROI(sliceNo, numberOfROIsInSlice[sliceNo]);
+            objAnnotation.AddboundryPoint(sliceNo, numberOfROIsInSlice[sliceNo], first_x, first_y);
+            bmpZoomedPaned = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            tmpGraphic = Graphics.FromImage(bmpZoomedPaned);
+            tmpGraphic.DrawImage(bmpOriginal, new Rectangle(0, 0, bmpZoomedPaned.Width, bmpZoomedPaned.Height),
+                new Rectangle(movex, movey, pictureBox1.Width / zoomRate, pictureBox1.Height / zoomRate),
+                GraphicsUnit.Pixel);
+            tmpGraphic.DrawLine(Pens.Red, oldx, oldy, point.X, point.Y);
+            pictureBox1.Image = bmpZoomedPaned;
+        }
+
+
     }
+
+
 
 
 }
