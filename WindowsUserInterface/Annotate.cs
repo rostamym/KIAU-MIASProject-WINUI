@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace DicomImageViewer
 {
@@ -34,13 +35,27 @@ namespace DicomImageViewer
         }
         public void ClearAnnotate(int slice)
         {
-            for (int i = 0; i < count_ROI; i++)                
+            for (int i = 0; i < count_ROI; i++)
+            {
+                try
                 {
-                    if (roisBoundryPointsList[slice ,i] != null)
-                        roisBoundryPointsList[slice ,i].Clear();
-                    if (roisRegionPointsList[slice ,i] != null)
-                        roisRegionPointsList[slice ,i].Clear();
+                    if (roisBoundryPointsList[slice, i] != null)
+                        roisBoundryPointsList[slice, i].Clear();
                 }
+                catch
+                {
+                }
+
+                try
+                {
+                    if (roisRegionPointsList[slice, i] != null)
+                        roisRegionPointsList[slice, i].Clear();
+                }
+                catch
+                {
+                }
+
+            }
 
         }
         private bool IsInPolygon(List  <Point> poly, Point p)

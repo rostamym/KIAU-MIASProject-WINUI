@@ -280,6 +280,7 @@ namespace MedicalCore
                     new Rectangle(movex, movey, pictureBox1.Width/zoomRate, pictureBox1.Height/zoomRate),
                     GraphicsUnit.Pixel);
                 for (int t = 0; t <= numberOfROIsInSlice[sliceNumber]; t++)
+                {
                     for (int i = 0; i < objAnnotation.roisBoundryPointsList[sliceNumber, t].Count - 1; i++)
                     {
                         tmpGraphic.DrawLine(Pens.Red,
@@ -288,6 +289,15 @@ namespace MedicalCore
                             ((objAnnotation.roisBoundryPointsList[sliceNumber, t][i + 1].X - (movex))*zoomRate),
                             ((objAnnotation.roisBoundryPointsList[sliceNumber, t][i + 1].Y - (movey))*zoomRate));
                     }
+                    foreach (var regionPoint in objAnnotation.roisRegionPointsList[sliceNumber, t])
+                    {
+                        tmpGraphic.DrawRectangle(Pens.IndianRed, regionPoint.X, regionPoint.Y, 1, 1);
+                    }
+                }
+
+
+
+
                 pictureBox1.Image = bmpZoomedPaned;
             }
         }
@@ -1229,8 +1239,10 @@ namespace MedicalCore
 
             if (numberOfSamplesPerPixel == 1 && numberOfBitsAllocated == 16)
             {
-                pictureBox1.Image = objConvertToBitmap.convertToBitmap16Bit(inputSlices3D16, sliceNumber,
-                    trackBarWinCenter.Value, trackBarWinWidth.Value);
+                showInPicturebox1(sliceNumber, trackBarWinCenter.Value, trackBarWinWidth.Value);
+
+                /*pictureBox1.Image = objConvertToBitmap.convertToBitmap16Bit(inputSlices3D16, sliceNumber,
+                    trackBarWinCenter.Value, trackBarWinWidth.Value);*/
             }
 
             if (numberOfSamplesPerPixel == 1 && numberOfBitsAllocated == 8)
@@ -1590,12 +1602,28 @@ namespace MedicalCore
 
         private void frmMainMenu_Load(object sender, EventArgs e)
         {
-                     this.openDICOM3DToolStripMenuItem_Click(sender, e);
-//            loadSampleGeometryShape(
-//                (x, y, z) => 
-//                                (x > 1 && x < 5 && y > 10 && y < 90 && z > 20 && z < 180)
-//                );
+            this.openDICOM3DToolStripMenuItem_Click(sender, e);
             this.segmentPulmonaryToolStripMenuItem_Click(sender,e);
+
+            //            loadSampleGeometryShape(
+            //                (x, y, z) => 
+            //                                (x > 1 && x < 5 && y > 10 && y < 90 && z > 20 && z < 180)
+            //                );
+
+
+            //test annotate
+//            UiteTestAnnotate();
+        }
+
+        private void UiteTestAnnotate()
+        {
+            var geometricImage =
+                new PulmonaryNodulesDetection().CreateParams3DGeometricImage(new structs.Point3D() {X = 512, Y = 512, Z = 100},
+                    short.MinValue, short.MaxValue,
+                    (x, y, z) =>
+                        (x > 1 && x < 5 && y > 10 && y < 90 && z > 20 && z < 80)
+                    );
+            annotateSegment(geometricImage);
         }
 
 
@@ -1678,27 +1706,53 @@ namespace MedicalCore
 
         public void annotateSegment(short[,,] image)
         {
-            CommonUtils.visitImageFunction(image, (x, y) =>
+            Dictionary<int,List<Point>> mydic = new Dictionary<int, List<Point>>();
+
+            CommonUtils.visitImageFunction(image, (x, p3d) =>
             {
-                if (x == short.MaxValue) drawRigion(y);
+                if (x == short.MaxValue)
+                {
+                    if(!mydic.ContainsKey(p3d.Z))
+                        mydic.Add(p3d.Z,new List<Point>());
+                    mydic[p3d.Z].Add(new Point() {X = p3d.X,Y=p3d.Y});
+
+                }
             });
+
+            foreach (var keyValuePair in mydic)
+            {
+
+                var sliceNo = keyValuePair.Key-1;
+                objAnnotation.ClearAnnotate(sliceNo);
+                numberOfROIsInSlice[sliceNo]++;
+                objAnnotation.make_new_ROI(sliceNo, numberOfROIsInSlice[sliceNo]);
+                objAnnotation.roisRegionPointsList[sliceNo, numberOfROIsInSlice[sliceNo]].AddRange(keyValuePair.Value);
+            }
+
+
         }
 
-        public void drawRigion(structs.Point3D point)
+
+
+
+       /* public void drawRigion(structs.Point3D point)
         {
-            var sliceNo = point.Z;
+//            var sliceNo = point.Z;
 
-            numberOfROIsInSlice[sliceNo]++;
-            objAnnotation.make_new_ROI(sliceNo, numberOfROIsInSlice[sliceNo]);
-            objAnnotation.AddboundryPoint(sliceNo, numberOfROIsInSlice[sliceNo], first_x, first_y);
+//            numberOfROIsInSlice[sliceNo]++;
+//            objAnnotation.make_new_ROI(sliceNo, numberOfROIsInSlice[sliceNo]);
+//            objAnnotation.(sliceNo, numberOfROIsInSlice[sliceNo], first_x, first_y);
             bmpZoomedPaned = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-            tmpGraphic = Graphics.FromImage(bmpZoomedPaned);
-            tmpGraphic.DrawImage(bmpOriginal, new Rectangle(0, 0, bmpZoomedPaned.Width, bmpZoomedPaned.Height),
-                new Rectangle(movex, movey, pictureBox1.Width / zoomRate, pictureBox1.Height / zoomRate),
-                GraphicsUnit.Pixel);
-            tmpGraphic.DrawLine(Pens.Red, oldx, oldy, point.X, point.Y);
+
+            //            tmpGraphic = Graphics.FromImage(bmpZoomedPaned);
+            //            tmpGraphic.DrawImage(bmpOriginal, new Rectangle(0, 0, bmpZoomedPaned.Width, bmpZoomedPaned.Height),
+            //                new Rectangle(movex, movey, pictureBox1.Width / zoomRate, pictureBox1.Height / zoomRate),
+            //                GraphicsUnit.Pixel);
+            //            tmpGraphic.DrawLine(Pens.Red, oldx, oldy, point.X, point.Y);
+            //          
+            bmpZoomedPaned.SetPixel(point.X, point.Y, Color.Red);
             pictureBox1.Image = bmpZoomedPaned;
-        }
+        }*/
 
 
     }

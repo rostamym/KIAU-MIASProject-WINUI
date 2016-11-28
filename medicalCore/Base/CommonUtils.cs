@@ -20,7 +20,7 @@ namespace DicomImageViewer.Base
                 for (int colIndex = 0; colIndex < maxColLength; colIndex++)
                     for (int depthIndex = 0; depthIndex < maxDepthLength; depthIndex++)
                         action(pixes[rowIndex, colIndex, depthIndex],
-                            new structs.Point3D() {X = rowIndex, Y = colIndex, Z = depthIndex});
+                            new structs.Point3D() {Z = rowIndex, X = colIndex, Y = depthIndex});
 
            
         }
