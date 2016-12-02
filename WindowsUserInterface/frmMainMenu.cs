@@ -318,9 +318,9 @@ namespace MedicalCore
 
         private void openDICOM3DToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Dicom Images (*.dcm)|*.dcm";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+//            OpenFileDialog openFileDialog = new OpenFileDialog();
+//            openFileDialog.Filter = "Dicom Images (*.dcm)|*.dcm";
+//            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 existInputSlice = true;
                 existOutputSlice = false;
@@ -329,7 +329,8 @@ namespace MedicalCore
                 imageType = 1;
                 minValue3D = int.MaxValue;
                 maxValue3D = int.MinValue;
-                objDicomReader = new DicomImageViewer.dicomReader(openFileDialog.FileName);
+//                objDicomReader = new DicomImageViewer.dicomReader(openFileDialog.FileName);
+                objDicomReader = new DicomImageViewer.dicomReader(@"E:\work\University\LIDC-IDRI\DOI\LIDC-IDRI-0013\1.3.6.1.4.1.14519.5.2.1.6279.6001.331662654015358587276208254750\1.3.6.1.4.1.14519.5.2.1.6279.6001.174907798609768549012640380786\000001.dcm");
 
                 numberOfBitsAllocated = objDicomReader.bitsAllocated;
                 numberOfSamplesPerPixel = objDicomReader.samplesPerPixel;
@@ -1524,33 +1525,69 @@ namespace MedicalCore
 
         private void seg0ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            outputSlices3D16 = segments[0];
-            showInPicturebox2(sliceNumber);
-            annotateSegment(outputSlices3D16);
+            try
+            {
+                outputSlices3D16 = segments[0];
+                showInPicturebox2(sliceNumber);
+                annotateSegment(outputSlices3D16);
+            }
+            catch (Exception ex)
+            {
 
+                MessageBox.Show(this, ex.Message);
+
+            }
 
 
         }
 
         private void seg1ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            outputSlices3D16 = segments[1];
-            showInPicturebox2(sliceNumber);
-            annotateSegment(outputSlices3D16);
+            try
+            {
+                outputSlices3D16 = segments[1];
+                showInPicturebox2(sliceNumber);
+                annotateSegment(outputSlices3D16);
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(this, ex.Message);
+
+            }
         }
 
         private void seg2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            outputSlices3D16 = segments[2];
-            showInPicturebox2(sliceNumber);
-            annotateSegment(outputSlices3D16);
+            try
+            {
+                outputSlices3D16 = segments[2];
+                showInPicturebox2(sliceNumber);
+                annotateSegment(outputSlices3D16);
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(this, ex.Message);
+
+            }
+            
         }
 
         private void seg3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            outputSlices3D16 = segments[3];
-            showInPicturebox2(sliceNumber);
-            annotateSegment(outputSlices3D16);
+            try
+            {
+                outputSlices3D16 = segments[3];
+                showInPicturebox2(sliceNumber);
+                annotateSegment(outputSlices3D16);
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(this, ex.Message);
+
+            }
         }
 
         private void skewnessOfHistogramToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1603,7 +1640,12 @@ namespace MedicalCore
         private void frmMainMenu_Load(object sender, EventArgs e)
         {
             this.openDICOM3DToolStripMenuItem_Click(sender, e);
-            this.segmentPulmonaryToolStripMenuItem_Click(sender,e);
+
+            //            this.segmentPulmonaryToolStripMenuItem_Click(sender,e);
+
+            makeSample(sender, e);
+
+
 
             //            loadSampleGeometryShape(
             //                (x, y, z) => 
@@ -1612,20 +1654,64 @@ namespace MedicalCore
 
 
             //test annotate
-//            UiteTestAnnotate();
+            //            UiteTestAnnotate();
         }
+
+        private void makeSample(object sender, EventArgs e)
+        {
+
+            for (int j = 0; j < 8; j++)
+            {
+                var arg1 = (j & 1)>0;
+                var arg2 = (j & 2)>0;
+                var arg3= (j & 4)>0;
+                //                MessageBox.Show(string.Format("PIC_SAM_{0}_{1}_{2}", arg1, arg2, arg3));
+
+
+                var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, arg1, arg2,arg3);
+
+
+                for (int i = 0; i < segmentPulmonary.Count; i++)
+                {
+                    outputSlices3D16 = segmentPulmonary[i];
+                    showInPicturebox2(sliceNumber);
+                    annotateSegment(outputSlices3D16);
+
+                    sliceNumber = 22;
+                    btnNext_Click(sender, e);
+                    
+                    SaveImageCapture(pictureBox1.Image, string.Format("PIC_SAM_isApplyClosing_{0}_isUsedThresholdMask_{1}_ignoreThreshold_{2}_SEG_Prim{3}.jpg",arg1,arg2,arg3,i));
+                    SaveImageCapture(pictureBox2.Image, string.Format("PIC_SAM_isApplyClosing_{0}_isUsedThresholdMask_{1}_ignoreThreshold_{2}_SEG_Alter{3}.jpg", arg1, arg2, arg3, i));
+
+                }
+            }
+
+            MessageBox.Show("finish");
+
+        }
+
 
         private void UiteTestAnnotate()
         {
-            var geometricImage =
-                new PulmonaryNodulesDetection().CreateParams3DGeometricImage(new structs.Point3D() {X = 512, Y = 512, Z = 100},
-                    short.MinValue, short.MaxValue,
-                    (x, y, z) =>
-                        (x > 1 && x < 5 && y > 10 && y < 90 && z > 20 && z < 80)
-                    );
+            var geometricImage = new PulmonaryNodulesDetection().CreateParams3DGeometricImage(new structs.Point3D() {X = 512, Y = 512, Z = 100},
+                short.MinValue, short.MaxValue,
+                (x, y, z) =>
+                    (x > 1 && x < 5 && y > 10 && y < 90 && z > 20 && z < 80)
+                );
             annotateSegment(geometricImage);
+
+            
         }
 
+
+        public static void SaveImageCapture(System.Drawing.Image image, string filename)
+        {
+            using (System.IO.FileStream fstream = new System.IO.FileStream(string.Format(@"D:\{0}", filename), System.IO.FileMode.Create))
+            {
+                image.Save(fstream, System.Drawing.Imaging.ImageFormat.Jpeg);
+                fstream.Close();
+            }
+        }
 
         private void loadSampleGeometryShape(Func<int, int, int, bool> geoFunc)
         {

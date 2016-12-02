@@ -172,7 +172,7 @@ namespace DicomImageViewer
             
 
             var varianceList = makeVarianceList(intenceVectores);
-            var highLevelVqAlgoritm = new VQAlgoritm(varianceList, 2, intenceVectores);
+            var highLevelVqAlgoritm = new VQAlgoritm(varianceList, 3, intenceVectores);
             highLevelVqAlgoritm.DoAlgoritm();
 
             // Connect Component Analysis
@@ -206,7 +206,6 @@ namespace DicomImageViewer
 
             resualt.Add(CommonUtils.ApplyFilterFunction(imageBinery, lungMask2, (x, m) => m == 1 ? short.MaxValue : short.MinValue));
 
-            /*
                         var lungMask3 = MakMaskFromLocalIntenceVectore(highLevelVqAlgoritm.VectorLabeleDictionary[2], maskSize);
 
                         //Morphological Closing
@@ -217,7 +216,6 @@ namespace DicomImageViewer
                         }
 
                         resualt.Add(CommonUtils.ApplyFilterFunction(imageBinery, lungMask3, (x, m) => m == 1 ? short.MaxValue : short.MinValue));
-                        */
 
             return resualt;
         }
