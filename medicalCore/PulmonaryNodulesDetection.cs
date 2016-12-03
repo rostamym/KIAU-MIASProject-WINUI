@@ -142,7 +142,7 @@ namespace DicomImageViewer
 
         public Boolean[, ,] LocalIntenceMask { get; set; }
 
-        public List<short[,,]> SegmentPulmonary(short[,,] imageBinery,bool isApplyClosing,bool isUsedThresholdMask,bool ignoreThreshold)
+        public List<short[,,]> SegmentPulmonary(short[,,] imageBinery,int segmentNum ,bool isApplyClosing,bool isUsedThresholdMask,bool ignoreThreshold)
         {
             //Simple thresholding
             bool[,,] thresholdMask = null;
@@ -172,7 +172,7 @@ namespace DicomImageViewer
             
 
             var varianceList = makeVarianceList(intenceVectores);
-            var highLevelVqAlgoritm = new VQAlgoritm(varianceList, 3, intenceVectores);
+            var highLevelVqAlgoritm = new VQAlgoritm(varianceList, segmentNum, intenceVectores);
             highLevelVqAlgoritm.DoAlgoritm();
 
             // Connect Component Analysis
@@ -183,39 +183,21 @@ namespace DicomImageViewer
                 Y = imageBinery.GetLength(1),
                 Z = imageBinery.GetLength(2)
             };
-            var lungMask1 = MakMaskFromLocalIntenceVectore(highLevelVqAlgoritm.VectorLabeleDictionary[0], maskSize);
-            
-            //Morphological Closing
-            if (isApplyClosing)
-            {
-                var structElement3D = MakeClosingMask();
-                lungMask1 = new Morphology().closing3D(lungMask1, structElement3D);
-            }
 
             var resualt = new List<short[,,]>();
-            resualt.Add(  CommonUtils.ApplyFilterFunction(imageBinery, lungMask1, (x, m) => m == 1 ? short.MinValue: x));
-
-            var lungMask2 = MakMaskFromLocalIntenceVectore(highLevelVqAlgoritm.VectorLabeleDictionary[1], maskSize);
-
-            //Morphological Closing
-            if (isApplyClosing)
+            foreach (var VectorLabel in highLevelVqAlgoritm.VectorLabeleDictionary)
             {
-                var structElement3D = MakeClosingMask();
-                lungMask2 = new Morphology().closing3D(lungMask2, structElement3D);
+                var lungMask = MakMaskFromLocalIntenceVectore(highLevelVqAlgoritm.VectorLabeleDictionary[0], maskSize);
+
+                //Morphological Closing
+                if (isApplyClosing)
+                {
+                    var structElement3D = MakeClosingMask();
+                    lungMask = new Morphology().closing3D(lungMask, structElement3D);
+                }
+
+                resualt.Add(CommonUtils.ApplyFilterFunction(imageBinery, lungMask, (x, m) => m == 1 ? short.MinValue : x));
             }
-
-            resualt.Add(CommonUtils.ApplyFilterFunction(imageBinery, lungMask2, (x, m) => m == 1 ? short.MaxValue : short.MinValue));
-
-                        var lungMask3 = MakMaskFromLocalIntenceVectore(highLevelVqAlgoritm.VectorLabeleDictionary[2], maskSize);
-
-                        //Morphological Closing
-                        if (isApplyClosing)
-                        {
-                            var structElement3D = MakeClosingMask();
-                            lungMask3 = new Morphology().closing3D(lungMask3, structElement3D);
-                        }
-
-                        resualt.Add(CommonUtils.ApplyFilterFunction(imageBinery, lungMask3, (x, m) => m == 1 ? short.MaxValue : short.MinValue));
 
             return resualt;
         }

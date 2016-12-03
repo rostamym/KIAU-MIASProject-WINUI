@@ -32,6 +32,15 @@ namespace MedicalCore
 
         Annotate objAnnotation;
 
+        private static string folderName;
+
+        static frmMainMenu()
+        {
+            folderName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            Directory.CreateDirectory(@"D:\SampleSeg\" + folderName);
+
+        }
+
 
         short[,,] inputSlices3D16;
         byte[,,] inputSlices3D8;
@@ -1628,7 +1637,7 @@ namespace MedicalCore
 //            outputSlices3D16 = segmentPulmonary;
 //            showInPicturebox2(sliceNumber);
 
-            var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, false,true,true);
+            var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16,2, false,true,true);
 
             segments = segmentPulmonary;
 //            seg0ToolStripMenuItem_Click(sender, e);
@@ -1659,30 +1668,41 @@ namespace MedicalCore
 
         private void makeSample(object sender, EventArgs e)
         {
-
-            for (int j = 0; j < 8; j++)
+            for (int segno = 2; segno <= 4; segno++)
             {
-                var arg1 = (j & 1)>0;
-                var arg2 = (j & 2)>0;
-                var arg3= (j & 4)>0;
-                //                MessageBox.Show(string.Format("PIC_SAM_{0}_{1}_{2}", arg1, arg2, arg3));
 
 
-                var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, arg1, arg2,arg3);
-
-
-                for (int i = 0; i < segmentPulmonary.Count; i++)
+                for (int j = 0; j < 8; j++)
                 {
-                    outputSlices3D16 = segmentPulmonary[i];
-                    showInPicturebox2(sliceNumber);
-                    annotateSegment(outputSlices3D16);
+                    var arg1 = (j & 1) > 0;
+                    var arg2 = (j & 2) > 0;
+                    var arg3 = (j & 4) > 0;
+                    //                MessageBox.Show(string.Format("PIC_SAM_{0}_{1}_{2}", arg1, arg2, arg3));
 
-                    sliceNumber = 22;
-                    btnNext_Click(sender, e);
-                    
-                    SaveImageCapture(pictureBox1.Image, string.Format("PIC_SAM_isApplyClosing_{0}_isUsedThresholdMask_{1}_ignoreThreshold_{2}_SEG_Prim{3}.jpg",arg1,arg2,arg3,i));
-                    SaveImageCapture(pictureBox2.Image, string.Format("PIC_SAM_isApplyClosing_{0}_isUsedThresholdMask_{1}_ignoreThreshold_{2}_SEG_Alter{3}.jpg", arg1, arg2, arg3, i));
 
+                    var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, segno, arg1,
+                        arg2, arg3);
+
+
+                    for (int i = 0; i < segmentPulmonary.Count; i++)
+                    {
+                        outputSlices3D16 = segmentPulmonary[i];
+                        showInPicturebox2(sliceNumber);
+                        annotateSegment(outputSlices3D16);
+
+                        sliceNumber = 22;
+                        btnNext_Click(sender, e);
+
+                        SaveImageCapture(pictureBox1.Image,
+                            string.Format(
+                                "PIC_SEG{0}_SAM_isApplyClosing_{1}_isUsedThresholdMask_{2}_ignoreThreshold_{3}_SEG_Prim{4}.jpg",
+                                segno,arg1, arg2, arg3, i));
+                        SaveImageCapture(pictureBox2.Image,
+                            string.Format(
+                                "PIC_SEG{0}_SAM_isApplyClosing_{1}_isUsedThresholdMask_{2}_ignoreThreshold_{3}_SEG_Alter{4}.jpg",
+                                segno,arg1, arg2, arg3, i));
+
+                    }
                 }
             }
 
@@ -1706,7 +1726,7 @@ namespace MedicalCore
 
         public static void SaveImageCapture(System.Drawing.Image image, string filename)
         {
-            using (System.IO.FileStream fstream = new System.IO.FileStream(string.Format(@"D:\{0}", filename), System.IO.FileMode.Create))
+            using (System.IO.FileStream fstream = new System.IO.FileStream(string.Format(@"D:\SampleSeg\{0}\{1}", folderName, filename), System.IO.FileMode.Create))
             {
                 image.Save(fstream, System.Drawing.Imaging.ImageFormat.Jpeg);
                 fstream.Close();
