@@ -1668,46 +1668,66 @@ namespace MedicalCore
 
         private void makeSample(object sender, EventArgs e)
         {
-            for (int segno = 2; segno <= 4; segno++)
+            List<String> list = new List<string>();
+            try
             {
-
-
-                for (int j = 0; j < 8; j++)
+                for (int segno = 2; segno <= 4; segno++)
                 {
-                    var arg1 = (j & 1) > 0;
-                    var arg2 = (j & 2) > 0;
-                    var arg3 = (j & 4) > 0;
-                    //                MessageBox.Show(string.Format("PIC_SAM_{0}_{1}_{2}", arg1, arg2, arg3));
-
-
-                    var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, segno, arg1,
-                        arg2, arg3);
-
-
-                    for (int i = 0; i < segmentPulmonary.Count; i++)
+                    for (int j = 0; j < 8; j++)
                     {
-                        outputSlices3D16 = segmentPulmonary[i];
-                        showInPicturebox2(sliceNumber);
-                        annotateSegment(outputSlices3D16);
+                        var arg1 = (j & 1) > 0;
+                        var arg2 = (j & 2) > 0;
+                        var arg3 = (j & 4) > 0;
+                        //                MessageBox.Show(string.Format("PIC_SAM_{0}_{1}_{2}", arg1, arg2, arg3));
 
-                        sliceNumber = 22;
-                        btnNext_Click(sender, e);
 
-                        SaveImageCapture(pictureBox1.Image,
-                            string.Format(
-                                "PIC_SEG{0}_SAM_isApplyClosing_{1}_isUsedThresholdMask_{2}_ignoreThreshold_{3}_SEG_Prim{4}.jpg",
-                                segno,arg1, arg2, arg3, i));
-                        SaveImageCapture(pictureBox2.Image,
-                            string.Format(
-                                "PIC_SEG{0}_SAM_isApplyClosing_{1}_isUsedThresholdMask_{2}_ignoreThreshold_{3}_SEG_Alter{4}.jpg",
-                                segno,arg1, arg2, arg3, i));
+                        var segmentPulmonary = new PulmonaryNodulesDetection().SegmentPulmonary(inputSlices3D16, segno,
+                            arg1,
+                            arg2, arg3);
 
+
+                        for (int i = 0; i < segmentPulmonary.Count; i++)
+                        {
+                            outputSlices3D16 = segmentPulmonary[i];
+                            showInPicturebox2(sliceNumber);
+                            annotateSegment(outputSlices3D16);
+
+                            sliceNumber = 22;
+                            btnNext_Click(sender, e);
+
+                            var primeryFileName =
+                                string.Format(
+                                    "PIC_SEG{0}_SAM_isApplyClosing_{1}_isUsedThresholdMask_{2}_ignoreThreshold_{3}_SEG_Prim{4}.jpg",
+                                    segno, arg1, arg2, arg3, i);
+                            SaveImageCapture(pictureBox1.Image, primeryFileName);
+
+                            var alterFileNmae =
+                                string.Format(
+                                    "PIC_SEG{0}_SAM_isApplyClosing_{1}_isUsedThresholdMask_{2}_ignoreThreshold_{3}_SEG_Alter{4}.jpg",
+                                    segno, arg1, arg2, arg3, i);
+                            SaveImageCapture(pictureBox2.Image, alterFileNmae);
+
+                            list.Add(string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}", segno, arg1, arg2, arg3, i,
+                                primeryFileName, alterFileNmae));
+                            Console.WriteLine(string.Format("done --->  {0}|{1}|{2}|{3}|{4}|{5}|{6}", segno, arg1, arg2,
+                                arg3, i,
+                                primeryFileName, alterFileNmae));
+
+                        }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                list.Add("problem ");
+                list.Add(ex.StackTrace);
+            }
+            finally
+            {
+                File.WriteAllLines(string.Format(@"D:\SampleSeg\{0}\{1}", folderName, "dataListItem"), list);
 
-            MessageBox.Show("finish");
-
+                MessageBox.Show("finish");
+            }
         }
 
 
