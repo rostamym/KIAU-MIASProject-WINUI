@@ -19,6 +19,12 @@ namespace MedicalCore
 {
     public partial class frmMainMenu : Form
     {
+        // todo Mehdi please remove
+        //private const string staticFileName = @"@"E:\work\University\LIDC-IDRI\DOI\LIDC-IDRI-0013\1.3.6.1.4.1.14519.5.2.1.6279.6001.331662654015358587276208254750\1.3.6.1.4.1.14519.5.2.1.6279.6001.174907798609768549012640380786\000001.dcm"";
+        private const string staticFileName = @"D:\Work\University\1.3.6.1.4.1.14519.5.2.1.6279.6001.747803439040091794717626507402\000001.dcm";
+
+
+
         //short[,,] inputSlices3D16;
         //short[,] inputSlices2D16;
 
@@ -339,7 +345,7 @@ namespace MedicalCore
                 minValue3D = int.MaxValue;
                 maxValue3D = int.MinValue;
 //                objDicomReader = new DicomImageViewer.dicomReader(openFileDialog.FileName);
-                objDicomReader = new DicomImageViewer.dicomReader(@"E:\work\University\LIDC-IDRI\DOI\LIDC-IDRI-0013\1.3.6.1.4.1.14519.5.2.1.6279.6001.331662654015358587276208254750\1.3.6.1.4.1.14519.5.2.1.6279.6001.174907798609768549012640380786\000001.dcm");
+                objDicomReader = new DicomImageViewer.dicomReader(staticFileName);
 
                 numberOfBitsAllocated = objDicomReader.bitsAllocated;
                 numberOfSamplesPerPixel = objDicomReader.samplesPerPixel;

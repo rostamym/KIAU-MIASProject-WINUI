@@ -29,6 +29,9 @@ namespace DicomImageViewer
 
     class DicomDecoder
     {
+
+       
+
         #region alireza_p_data
         Queue<byte> ap_q = new Queue<byte>();
         Queue<string> ap_q_s = new Queue<string>();
